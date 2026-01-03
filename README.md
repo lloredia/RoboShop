@@ -1,4 +1,5 @@
-# RoboShop
+# RoboShop ![Alt text](https://avatars.githubusercontent.com/u/5128994?v=4)
+
 
 # CloudMart - Cloud-Native E-Commerce Platform
 
