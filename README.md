@@ -1,6 +1,4 @@
- ![Alt text](https://avatars.githubusercontent.com/u/5128994?v=4)
-
-   # RoboShop - Cloud-Native E-Commerce Platform
+# CloudMart - Cloud-Native E-Commerce Platform
 
 A production-ready microservices-based e-commerce platform built with DevOps best practices.
 
