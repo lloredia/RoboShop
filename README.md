@@ -1,21 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # RoboShop on AWS — Terraform + Ansible
 
 <p align="center">
@@ -28,16 +10,6 @@
 <br/>
 
 <img src="docs/stan.png" width="180" alt="RoboShop Mascot" />
-
-<br/><br/>
-
-<!-- BADGES -->
-<img src="https://img.shields.io/github/last-commit/lloredia/RoboShop?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
-<img src="https://img.shields.io/github/languages/top/lloredia/RoboShop?style=flat&color=0080ff" alt="repo-top-language">
-<img src="https://img.shields.io/github/languages/count/lloredia/RoboShop?style=flat&color=0080ff" alt="repo-language-count">
-<img src="https://img.shields.io/github/repo-size/lloredia/RoboShop?style=flat&color=0080ff" alt="repo-size">
-
-<br/><br/>
 
 <em>Built with the tools and technologies:</em>
 
