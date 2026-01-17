@@ -30,7 +30,7 @@
 rweaefafwkjoenmfujinaweiunbrfuiefyuoaweryurfyuhbrgyuebfgyibergyvbyfegyrbgbrf
 
 
-## Tech stack (with icons)
+## Tech stack 
 
 ### Infrastructure / Automation
 - <img src="https://skillicons.dev/icons?i=terraform" height="18" /> Terraform (HCL)
@@ -95,7 +95,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
          └─────────────────────┘
          
 ```
-## Tech stack (with icons)
+## Tech stack 
 
 ### Infrastructure / Automation
 - <img src="https://skillicons.dev/icons?i=terraform" height="18" /> Terraform (HCL)
