@@ -1,0 +1,16 @@
+# ─────────────────────────────
+# Count Ansible YAML as YAML
+# ─────────────────────────────
+ansible/**/*.yml linguist-language=YAML
+ansible/**/*.yaml linguist-language=YAML
+
+# ─────────────────────────────
+# Count Terraform correctly
+# ─────────────────────────────
+*.tf linguist-language=HCL
+*.tfvars linguist-language=HCL
+
+# ─────────────────────────────
+# Count Bash / Shell
+# ─────────────────────────────
+*.sh linguist-language=Shell
