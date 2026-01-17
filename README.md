@@ -1,5 +1,6 @@
 <div id="top" align="center">
 <img src="docs/stan.png" width="200" alt="RoboShop Mascot" />
+</div>
 
 # RoboShop E-Commerce Platform - AWS Deployment
 
