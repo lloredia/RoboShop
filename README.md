@@ -1,3 +1,86 @@
+<div id="top">
+
+<!-- HEADER STYLE: CLASSIC -->
+<div align="center">
+
+# ROBOSHOP ON AWS
+
+<em>Production-Grade Microservices Deployment with Terraform & Ansible</em>
+
+<br/>
+
+<img src="docs/stan.png" width="380" alt="RoboShop Mascot" />
+
+<br/><br/>
+
+<!-- BADGES -->
+<img src="https://img.shields.io/github/last-commit/lloredia/RoboShop?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
+<img src="https://img.shields.io/github/languages/top/lloredia/RoboShop?style=flat&color=0080ff" alt="repo-top-language">
+<img src="https://img.shields.io/github/languages/count/lloredia/RoboShop?style=flat&color=0080ff" alt="repo-language-count">
+<img src="https://img.shields.io/github/repo-size/lloredia/RoboShop?style=flat&color=0080ff" alt="repo-size">
+
+<br/><br/>
+
+<em>Built with the tools and technologies:</em>
+
+<br/>
+
+<img src="https://img.shields.io/badge/Terraform-844FBA.svg?style=flat&logo=Terraform&logoColor=white" alt="Terraform">
+<img src="https://img.shields.io/badge/Ansible-EE0000.svg?style=flat&logo=Ansible&logoColor=white" alt="Ansible">
+<img src="https://img.shields.io/badge/AWS-FF9900.svg?style=flat&logo=Amazon-AWS&logoColor=white" alt="AWS">
+<img src="https://img.shields.io/badge/Linux-000000.svg?style=flat&logo=Linux&logoColor=white" alt="Linux">
+<img src="https://img.shields.io/badge/Bash-121011.svg?style=flat&logo=GNU-Bash&logoColor=white" alt="Bash">
+<img src="https://img.shields.io/badge/YAML-CB171E.svg?style=flat&logo=YAML&logoColor=white" alt="YAML">
+
+</div>
+<br>
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # RoboShop on AWS — Terraform + Ansible
 
 <p align="center">
