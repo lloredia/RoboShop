@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="docs/stan.png" width="700" />
-</p>
+
 
 #![Architecture Diagram](docs/stan.png)
 
