@@ -1,3 +1,146 @@
+# RoboShop on AWS — Terraform + Ansible (Microservices Platform)
+
+<p align="center">
+  <b>Production-style RoboShop deployment on AWS using Terraform (IaC) + Ansible (config mgmt).</b><br/>
+  Private networking, service discovery, and automated provisioning of EC2-based microservices + data tier.
+</p>
+
+<p align="center">
+  <!-- Core badges -->
+  <img alt="Terraform" src="https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white" />
+  <img alt="Ansible" src="https://img.shields.io/badge/Ansible-Config%20Mgmt-EE0000?logo=ansible&logoColor=white" />
+  <img alt="AWS" src="https://img.shields.io/badge/AWS-EC2%20%7C%20VPC%20%7C%20Route53-FF9900?logo=amazonaws&logoColor=white" />
+  <img alt="Linux" src="https://img.shields.io/badge/Linux-Amazon%20Linux-000000?logo=linux&logoColor=white" />
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-green.svg" />
+</p>
+
+---
+
+## What this repo does
+
+This repository deploys a microservices-based e-commerce platform on AWS using:
+- **Terraform** to provision the infrastructure (VPC, subnets, EC2, Route53 private DNS, security groups)
+- **Ansible** to configure servers and install/run services
+
+It’s built around a secure network pattern:
+- **Public subnet:** Bastion Host + Internet Gateway
+- **Private subnets:** App tier + DB tier behind a NAT Gateway
+- **Service discovery:** Route53 Private Hosted Zone (e.g., `*.roboshop.internal`)
+
+Repo summary (from GitHub): “Production-grade microservices e-commerce platform on AWS using Terraform and Ansible… automated deployment of 8 EC2 instances running MongoDB, MySQL, Redis, RabbitMQ, and Node.js microservices.” :contentReference[oaicite:2]{index=2}
+
+---
+
+## Architecture (high level)
+
+Internet
+|
+Internet Gateway
+|
+Public Subnet
+└─ Bastion Host
+|
+NAT Gateway
+|
+┌───────────────┬────────────────┐
+| | |
+Private App Subnet Private DB Subnet
+
+frontend (nginx) - mongodb
+
+catalogue (node) - mysql/mariadb
+
+user (node) - redis
+
+cart (node) - rabbitmq
+
+php-template
+Copy code
+
+---
+
+## Tech stack (with icons)
+
+### Infrastructure / Automation
+- <img src="https://skillicons.dev/icons?i=terraform" height="18" /> Terraform (HCL)
+- <img src="https://skillicons.dev/icons?i=ansible" height="18" /> Ansible (YAML playbooks)
+- <img src="https://skillicons.dev/icons?i=aws" height="18" /> AWS (EC2, VPC, Route53, IGW, NAT)
+- <img src="https://skillicons.dev/icons?i=bash" height="18" /> Shell / Bash (bootstrap + ops scripts)
+
+### Platform services
+- <img src="https://skillicons.dev/icons?i=nginx" height="18" /> Nginx (frontend / reverse proxy)
+- <img src="https://skillicons.dev/icons?i=nodejs" height="18" /> Node.js (microservices runtime)
+- <img src="https://skillicons.dev/icons?i=mongodb" height="18" /> MongoDB
+- <img src="https://skillicons.dev/icons?i=mysql" height="18" /> MySQL/MariaDB
+- <img src="https://skillicons.dev/icons?i=redis" height="18" /> Redis
+- <img src="https://skillicons.dev/icons?i=rabbitmq" height="18" /> RabbitMQ
+
+> **Languages used in THIS repo:** HCL + Shell (per GitHub language stats). :contentReference[oaicite:3]{index=3}  
+> The application services themselves are Node.js-based, but they’re deployed/configured from this infra repo. :contentReference[oaicite:4]{index=4}
+
+---
+
+## Repo layout
+
+.
+├── terraform/ # AWS infrastructure (VPC, EC2, SGs, Route53, etc.)
+├── modules/ # Reusable Terraform modules (vpc, security-groups, route53, ...)
+├── ansible/ # Playbooks + inventory to configure EC2 instances
+├── user-data/ # Bootstrap scripts (cloud-init/user-data)
+├── docs/ # Documentation / notes
+└── README.md
+
+yaml
+Copy code
+
+---
+
+## Prerequisites
+
+- Terraform >= 1.0
+- Ansible >= 2.9
+- AWS CLI configured (`aws configure`)
+- SSH key pair for EC2 access
+- A workstation with `git` + SSH client
+
+---
+
+## Quick start
+
+### 1) Clone
+
+```bash
+git clone https://github.com/lloredia/RoboShop.git
+cd RoboShop
+
+
+
+
+
+
+
+
+
+
+
+
+
+rweaefafwkjoenmfujinaweiunbrfuiefyuoaweryurfyuhbrgyuebfgyibergyvbyfegyrbgbrf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # RoboShop E-Commerce Platform - AWS Deployment
 
