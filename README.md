@@ -41,26 +41,26 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
 ## Architecture Overview
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         Internet                             │
+│                         Internet                            │
 └────────────────────┬────────────────────────────────────────┘
                      │
             ┌────────▼────────┐
-            │  Internet Gateway│
+            │ Internet Gateway│
             └────────┬────────┘
                      │
         ┌────────────▼────────────┐
         │    Public Subnet        │
-        │  ┌──────────────────┐  │
-        │  │  Bastion Host    │  │
-        │  └──────────────────┘  │
+        │  ┌──────────────────┐   │
+        │  │  Bastion Host    │   │
+        │  └──────────────────┘   │
         └────────────┬────────────┘
                      │
         ┌────────────▼──────────────────────────┐
-        │         NAT Gateway                    │
+        │         NAT Gateway                   │
         └────────────┬──────────────────────────┘
                      │
      ┌───────────────┴──────────────────┐
-     │                                   │
+     │                                  │
 ┌────▼─────────────┐          ┌─────────▼──────────┐
 │ Private App      │          │ Private DB         │
 │ Subnet           │          │ Subnet             │
@@ -76,7 +76,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
          ┌──────────▼──────────┐
          │  Route53 Private    │
          │  Hosted Zone        │
-         │  *.roboshop.internal│
+         │ *.roboshop.internal│
          └─────────────────────┘
          
 ```
