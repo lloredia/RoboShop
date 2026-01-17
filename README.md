@@ -21,20 +21,6 @@
 ---
 
 
-## What this repo does
-
-This repository deploys a microservices-based e-commerce platform on AWS using:
-- **Terraform** to provision the infrastructure (VPC, subnets, EC2, Route53 private DNS, security groups)
-- **Ansible** to configure servers and install/run services
-
-It’s built around a secure network pattern:
-- **Public subnet:** Bastion Host + Internet Gateway
-- **Private subnets:** App tier + DB tier behind a NAT Gateway
-- **Service discovery:** Route53 Private Hosted Zone (e.g., `*.roboshop.internal`)
-
-
----
-
 
 
 
@@ -42,16 +28,6 @@ It’s built around a secure network pattern:
 
 
 rweaefafwkjoenmfujinaweiunbrfuiefyuoaweryurfyuhbrgyuebfgyibergyvbyfegyrbgbrf
-
-
-
-
-
-
-
-
-
-
 
 
 
