@@ -1,6 +1,6 @@
-# Force Ansible YAML to be counted as YAML
-*.yml linguist-language=YAML
-*.yaml linguist-language=YAML
+# Count Ansible YAML source (playbooks, roles, inventory) as YAML
+ansible/**/*.yml linguist-language=YAML
+ansible/**/*.yaml linguist-language=YAML
 
 # --- Terraform should be HCL (usually auto-detected, but force it) ---
 *.tf linguist-language=HCL
