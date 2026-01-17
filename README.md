@@ -1,4 +1,8 @@
-#RoboShop on AWS — Terraform + Ansible  ![Architecture Diagram](docs/stan.png)  
+# RoboShop on AWS — Terraform + Ansible
+
+<p align="center">
+  <img src="docs/stan.png" width="420" alt="RoboShop Mascot" />
+</p>
 
 <p align="center">
   <b>Production-style RoboShop deployment on AWS using Terraform (IaC) + Ansible (config mgmt).</b><br/>
@@ -6,7 +10,6 @@
 </p>
 
 <p align="center">
-  <!-- Core badges -->
   <img alt="Terraform" src="https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white" />
   <img alt="Ansible" src="https://img.shields.io/badge/Ansible-Config%20Mgmt-EE0000?logo=ansible&logoColor=white" />
   <img alt="AWS" src="https://img.shields.io/badge/AWS-EC2%20%7C%20VPC%20%7C%20Route53-FF9900?logo=amazonaws&logoColor=white" />
@@ -15,6 +18,7 @@
 </p>
 
 ---
+
 
 ## What this repo does
 
