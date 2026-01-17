@@ -1,75 +1,9 @@
-# Serverless Health Check API (Terraform + GitHub Actions OIDC)
-
-<p align="center">
-  <strong>Production-style serverless /health endpoint on AWS with multi-env Terraform and secure CI/CD via GitHub OIDC (no long-lived AWS keys).</strong>
-</p>
-
-<p align="center">
-  <!-- Badges (edit repo/name as needed) -->
-  <img alt="Terraform" src="https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white" />
-  <img alt="AWS" src="https://img.shields.io/badge/AWS-Serverless-FF9900?logo=amazonaws&logoColor=white" />
-  <img alt="GitHub Actions" src="https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?logo=githubactions&logoColor=white" />
-  <img alt="OIDC" src="https://img.shields.io/badge/OIDC-Secure%20Auth-0B5FFF" />
-</p>
-
----
-
-## ✨ What this does
-
-When `GET /health` is invoked, the Lambda:
-- logs the request event to **CloudWatch**
-- generates a unique request ID
-- stores the request payload to **DynamoDB**
-- returns a JSON response like:
-
-```json
-{ "status": "healthy", "message": "Request processed and saved." }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # RoboShop E-Commerce Platform - AWS Deployment
 
 A complete microservices-based e-commerce platform deployed on AWS using Infrastructure as Code (Terraform) and Configuration Management (Ansible).
 
-## ���️ Architecture Overview
+## Architecture Overview
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         Internet                             │
