@@ -7,8 +7,7 @@
 <p align="center">
   <b>Production-style RoboShop deployment on AWS using Terraform (IaC) + Ansible (config mgmt).</b><br/>
   Private networking, service discovery, and automated provisioning of EC2-based microservices + data tier.
-</p>
-<!-- BADGES -->
+
 <img src="https://img.shields.io/github/last-commit/lloredia/Projects-X?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
 <img src="https://img.shields.io/github/languages/top/lloredia/Projects-X?style=flat&color=0080ff" alt="repo-top-language">
 <img src="https://img.shields.io/github/languages/count/lloredia/Projects-X?style=flat&color=0080ff" alt="repo-language-count">
