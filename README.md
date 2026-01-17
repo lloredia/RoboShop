@@ -41,17 +41,7 @@
 
 <em>Built with the tools and technologies:</em>
 
-<br/>
 
-<img src="https://img.shields.io/badge/Terraform-844FBA.svg?style=flat&logo=Terraform&logoColor=white" alt="Terraform">
-<img src="https://img.shields.io/badge/Ansible-EE0000.svg?style=flat&logo=Ansible&logoColor=white" alt="Ansible">
-<img src="https://img.shields.io/badge/AWS-FF9900.svg?style=flat&logo=Amazon-AWS&logoColor=white" alt="AWS">
-<img src="https://img.shields.io/badge/Linux-000000.svg?style=flat&logo=Linux&logoColor=white" alt="Linux">
-<img src="https://img.shields.io/badge/Bash-121011.svg?style=flat&logo=GNU-Bash&logoColor=white" alt="Bash">
-<img src="https://img.shields.io/badge/YAML-CB171E.svg?style=flat&logo=YAML&logoColor=white" alt="YAML">
-
-</div>
-<br>
 <p align="center">
   <img alt="Terraform" src="https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white" />
   <img alt="Ansible" src="https://img.shields.io/badge/Ansible-Config%20Mgmt-EE0000?logo=ansible&logoColor=white" />
