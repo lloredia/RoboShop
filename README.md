@@ -1,8 +1,75 @@
+# Serverless Health Check API (Terraform + GitHub Actions OIDC)
+
+<p align="center">
+  <strong>Production-style serverless /health endpoint on AWS with multi-env Terraform and secure CI/CD via GitHub OIDC (no long-lived AWS keys).</strong>
+</p>
+
+<p align="center">
+  <!-- Badges (edit repo/name as needed) -->
+  <img alt="Terraform" src="https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white" />
+  <img alt="AWS" src="https://img.shields.io/badge/AWS-Serverless-FF9900?logo=amazonaws&logoColor=white" />
+  <img alt="GitHub Actions" src="https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?logo=githubactions&logoColor=white" />
+  <img alt="OIDC" src="https://img.shields.io/badge/OIDC-Secure%20Auth-0B5FFF" />
+</p>
+
+---
+
+## âœ¨ What this does
+
+When `GET /health` is invoked, the Lambda:
+- logs the request event to **CloudWatch**
+- generates a unique request ID
+- stores the request payload to **DynamoDB**
+- returns a JSON response like:
+
+```json
+{ "status": "healthy", "message": "Request processed and saved." }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # RoboShop E-Commerce Platform - AWS Deployment
 
 A complete microservices-based e-commerce platform deployed on AWS using Infrastructure as Code (Terraform) and Configuration Management (Ansible).
 
-## í¿—ï¸ Architecture Overview
+## ï¿½ï¿½ï¿½ï¸ Architecture Overview
 ```
 â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
 â”‚                         Internet                             â”‚
@@ -44,7 +111,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
          â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
-## í³‹ Table of Contents
+## ï¿½ï¿½ï¿½ Table of Contents
 
 - [Features](#features)
 - [Prerequisites](#prerequisites)
@@ -78,7 +145,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
 - **Redis** - In-memory cache for sessions
 - **RabbitMQ** - Message queue for async processing
 
-## í´§ Prerequisites
+## ï¿½ï¿½ï¿½ Prerequisites
 
 ### Software Requirements
 - **Terraform** >= 1.0
@@ -96,7 +163,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
 - Text editor (VS Code recommended)
 - Terminal/Command line access
 
-## í» ï¸ Technology Stack
+## ï¿½ï¿½ï¿½ï¸ Technology Stack
 
 | Category | Technology | Purpose |
 |----------|------------|---------|
@@ -109,7 +176,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
 | Message Queue | RabbitMQ | Async communication |
 | DNS | Route53 | Service discovery |
 
-## í³ Project Structure
+## ï¿½ï¿½ï¿½ Project Structure
 ```
 roboshop-terraform-aws/
 â”œâ”€â”€ terraform/
@@ -151,7 +218,7 @@ roboshop-terraform-aws/
 â””â”€â”€ .gitignore                  # Git ignore rules
 ```
 
-## íº€ Getting Started
+## ï¿½ï¿½ï¿½ Getting Started
 
 ### 1. Clone the Repository
 ```bash
@@ -210,7 +277,7 @@ rabbitmq_password  = "roboshop123"
 private_domain = "roboshop.internal"
 ```
 
-## í³¦ Deployment
+## ï¿½ï¿½ï¿½ Deployment
 
 ### Phase 1: Infrastructure Deployment (Terraform)
 ```bash
@@ -305,7 +372,7 @@ chmod +x check-services.sh
 
 All services should show `active`.
 
-## í·ª Testing
+## ï¿½ï¿½ï¿½ Testing
 
 ### Access the Application
 
@@ -345,7 +412,7 @@ ssh ec2-user@user.roboshop.internal \
   "curl -s http://localhost:8080/health"
 ```
 
-## í°› Troubleshooting
+## ï¿½ï¿½ï¿½ Troubleshooting
 
 ### Common Issues
 
@@ -387,7 +454,7 @@ terraform refresh
 mv terraform.tfstate.backup terraform.tfstate
 ```
 
-## í³Š Architecture Decisions
+## ï¿½ï¿½ï¿½ Architecture Decisions
 
 ### Why This Architecture?
 
@@ -408,7 +475,7 @@ mv terraform.tfstate.backup terraform.tfstate
 | MariaDB | Drop-in MySQL replacement | Not official MySQL |
 | Node.js 16 | Stable, compatible | Not latest version |
 
-## í´ Security Considerations
+## ï¿½ï¿½ï¿½ Security Considerations
 
 ### Implemented
 âœ… Private subnets for all services  
@@ -426,7 +493,7 @@ mv terraform.tfstate.backup terraform.tfstate
 - [ ] IMDSv2 enforcement
 - [ ] Regular security scanning
 
-## í²° Cost Estimation
+## ï¿½ï¿½ï¿½ Cost Estimation
 
 **Monthly AWS Costs (us-east-1):**
 
@@ -439,13 +506,13 @@ mv terraform.tfstate.backup terraform.tfstate
 | Data Transfer | Minimal | ~$5 |
 | **Total** | | **~$110/month** |
 
-í²¡ **Cost Optimization:**
+ï¿½ï¿½ï¿½ **Cost Optimization:**
 - Use t3.nano for testing (~$3.80/month each)
 - Stop instances when not in use
 - Use NAT instance instead of NAT Gateway (~$3.50/month)
 - Consider Reserved Instances for production
 
-## í¾¯ Next Steps
+## ï¿½ï¿½ï¿½ Next Steps
 
 ### Short Term
 - [ ] Add Application Load Balancer for production access
@@ -468,14 +535,14 @@ mv terraform.tfstate.backup terraform.tfstate
 - [ ] Service mesh implementation (Istio/App Mesh)
 - [ ] Advanced monitoring with Prometheus/Grafana
 
-## í³š Additional Resources
+## ï¿½ï¿½ï¿½ Additional Resources
 
 - [Terraform AWS Provider Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 - [Ansible Documentation](https://docs.ansible.com/)
 - [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
 - [RoboShop Original Project](https://github.com/instana/robot-shop)
 
-## í´ Contributing
+## ï¿½ï¿½ï¿½ Contributing
 
 Contributions welcome! Please:
 1. Fork the repository
@@ -483,17 +550,17 @@ Contributions welcome! Please:
 3. Make your changes
 4. Submit a pull request
 
-## í³ License
+## ï¿½ï¿½ï¿½ License
 
 This project is for educational purposes.
 
-## í±¤ Author
+## ï¿½ï¿½ï¿½ Author
 
 **Your Name**
 - GitHub: [@yourusername](https://github.com/yourusername)
 - LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
 
-## í¹ Acknowledgments
+## ï¿½ï¿½ï¿½ Acknowledgments
 
 - RoboShop reference architecture
 - AWS documentation and best practices
