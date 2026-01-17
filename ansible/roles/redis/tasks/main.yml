@@ -1,0 +1,23 @@
+---
+- name: Install Redis from Amazon Linux Extras
+  shell: amazon-linux-extras install redis6 -y
+  args:
+    creates: /usr/bin/redis-server
+
+- name: Update Redis config to listen on all interfaces
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^bind 127.0.0.1'
+    line: 'bind 0.0.0.0'
+
+- name: Update Redis to disable protected mode
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^protected-mode yes'
+    line: 'protected-mode no'
+
+- name: Start and enable Redis
+  systemd:
+    name: redis
+    state: started
+    enabled: yes

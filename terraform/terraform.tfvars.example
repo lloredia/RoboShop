@@ -1,0 +1,42 @@
+# Copy this file to terraform.tfvars and update with your values
+# DO NOT commit terraform.tfvars to git (it's in .gitignore)
+
+# AWS Configuration
+aws_region = "us-east-1"
+
+# Project Configuration
+project_name = "roboshop"
+environment  = "dev"
+
+# Network Configuration
+vpc_cidr                = "10.0.0.0/16"
+public_subnet_cidr      = "10.0.1.0/24"
+private_app_subnet_cidr = "10.0.10.0/24"
+private_db_subnet_cidr  = "10.0.20.0/24"
+availability_zone       = "us-east-1a"
+
+# Security Configuration
+# IMPORTANT: Change this to your IP address for security!
+# Find your IP: curl ifconfig.me
+allowed_ssh_cidr = ["YOUR_IP_ADDRESS/32"]
+
+# SSH Public Key
+# Generate with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/roboshop
+# Then paste the content of: cat ~/.ssh/roboshop.pub
+ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2E... your-email@example.com"
+
+# Instance Types
+app_instance_type = "t3.micro"  # ~$7.50/month
+db_instance_type  = "t3.small"  # ~$15/month
+
+# Enable VPC Flow Logs (optional, costs extra)
+enable_flow_logs = false
+
+# Tags
+tags = {
+  Project     = "RoboShop"
+  Environment = "Development"
+  ManagedBy   = "Terraform"
+  Owner       = "Your Name"
+  CostCenter  = "Engineering"
+}

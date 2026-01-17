@@ -1,0 +1,16 @@
+[databases]
+mongodb ansible_host=mongodb.roboshop.internal
+mysql ansible_host=mysql.roboshop.internal
+redis ansible_host=redis.roboshop.internal
+rabbitmq ansible_host=rabbitmq.roboshop.internal
+
+[applications]
+frontend ansible_host=frontend.roboshop.internal
+catalogue ansible_host=catalogue.roboshop.internal
+user ansible_host=user.roboshop.internal
+cart ansible_host=cart.roboshop.internal
+
+[all:vars]
+ansible_user=ec2-user
+ansible_ssh_private_key_file=~/.ssh/roboshop-key
+ansible_python_interpreter=/usr/bin/python

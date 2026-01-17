@@ -1,0 +1,63 @@
+---
+- name: Install Nginx from Amazon Linux Extras
+  shell: amazon-linux-extras install nginx1 -y
+  args:
+    creates: /usr/sbin/nginx
+
+- name: Remove default Nginx content
+  file:
+    path: /usr/share/nginx/html
+    state: absent
+
+- name: Create Nginx html directory
+  file:
+    path: /usr/share/nginx/html
+    state: directory
+    mode: '0755'
+
+- name: Download frontend artifact
+  get_url:
+    url: "{{ frontend_url }}"
+    dest: /tmp/frontend.zip
+    mode: '0644'
+
+- name: Extract frontend artifact
+  unarchive:
+    src: /tmp/frontend.zip
+    dest: /usr/share/nginx/html
+    remote_src: yes
+
+- name: Create default.d directory if not exists
+  file:
+    path: /etc/nginx/default.d
+    state: directory
+    mode: '0755'
+
+- name: Configure Nginx reverse proxy
+  copy:
+    dest: /etc/nginx/default.d/roboshop.conf
+    content: |
+      proxy_http_version 1.1;
+      location /images/ {
+        expires 5s;
+        root   /usr/share/nginx/html;
+        try_files $uri /images/placeholder.jpg;
+      }
+      location /api/catalogue/ { proxy_pass http://catalogue.roboshop.internal:8080/; }
+      location /api/user/ { proxy_pass http://user.roboshop.internal:8080/; }
+      location /api/cart/ { proxy_pass http://cart.roboshop.internal:8080/; }
+      location /health {
+        stub_status on;
+        access_log off;
+      }
+
+- name: Start and enable Nginx
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Restart Nginx to apply config
+  systemd:
+    name: nginx
+    state: restarted

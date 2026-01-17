@@ -1,0 +1,66 @@
+---
+- name: Install Node.js 16
+  shell: |
+    curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+    yum install -y nodejs
+  args:
+    creates: /usr/bin/node
+
+- name: Create roboshop user
+  user:
+    name: roboshop
+    comment: "RoboShop Application User"
+    create_home: yes
+
+- name: Create app directory
+  file:
+    path: /app
+    state: directory
+    owner: roboshop
+    group: roboshop
+
+- name: Download cart artifact
+  get_url:
+    url: "{{ cart_url }}"
+    dest: /tmp/cart.zip
+    mode: '0644'
+
+- name: Extract cart artifact
+  unarchive:
+    src: /tmp/cart.zip
+    dest: /app
+    remote_src: yes
+    owner: roboshop
+    group: roboshop
+
+- name: Install npm dependencies
+  shell: npm install
+  args:
+    chdir: /app
+  become_user: roboshop
+
+- name: Create cart systemd service
+  copy:
+    dest: /etc/systemd/system/cart.service
+    content: |
+      [Unit]
+      Description=Cart Service
+      [Service]
+      User=roboshop
+      Environment=REDIS_HOST=redis.roboshop.internal
+      Environment=CATALOGUE_HOST=catalogue.roboshop.internal
+      Environment=CATALOGUE_PORT=8080
+      ExecStart=/bin/node /app/server.js
+      SyslogIdentifier=cart
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable cart
+  systemd:
+    name: cart
+    state: started
+    enabled: yes

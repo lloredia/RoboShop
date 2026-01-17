@@ -1,0 +1,35 @@
+---
+- name: Install MariaDB (MySQL compatible)
+  yum:
+    name: 
+      - mariadb-server
+      - MySQL-python
+    state: present
+
+- name: Start and enable MariaDB
+  systemd:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Set MariaDB root password
+  shell: |
+    mysqladmin -u root password '{{ mysql_root_password }}' 2>/dev/null || true
+  no_log: true
+
+- name: Create shipping database
+  shell: |
+    mysql -uroot -p'{{ mysql_root_password }}' -e "CREATE DATABASE IF NOT EXISTS cities;" 2>/dev/null || true
+  no_log: true
+
+- name: Download MySQL schema
+  get_url:
+    url: https://raw.githubusercontent.com/roboshop-devops-project/mysql/main/shipping.sql
+    dest: /tmp/shipping.sql
+    mode: '0644'
+  ignore_errors: yes
+
+- name: Load shipping schema
+  shell: mysql -uroot -p'{{ mysql_root_password }}' < /tmp/shipping.sql 2>/dev/null || true
+  no_log: true
+  ignore_errors: yes

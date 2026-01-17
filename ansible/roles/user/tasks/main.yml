@@ -1,0 +1,66 @@
+---
+- name: Install Node.js 16
+  shell: |
+    curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+    yum install -y nodejs
+  args:
+    creates: /usr/bin/node
+
+- name: Create roboshop user
+  user:
+    name: roboshop
+    comment: "RoboShop Application User"
+    create_home: yes
+
+- name: Create app directory
+  file:
+    path: /app
+    state: directory
+    owner: roboshop
+    group: roboshop
+
+- name: Download user artifact
+  get_url:
+    url: "{{ user_url }}"
+    dest: /tmp/user.zip
+    mode: '0644'
+
+- name: Extract user artifact
+  unarchive:
+    src: /tmp/user.zip
+    dest: /app
+    remote_src: yes
+    owner: roboshop
+    group: roboshop
+
+- name: Install npm dependencies
+  shell: npm install
+  args:
+    chdir: /app
+  become_user: roboshop
+
+- name: Create user systemd service
+  copy:
+    dest: /etc/systemd/system/user.service
+    content: |
+      [Unit]
+      Description=User Service
+      [Service]
+      User=roboshop
+      Environment=MONGO=true
+      Environment=REDIS_HOST=redis.roboshop.internal
+      Environment=MONGO_URL="mongodb://mongodb.roboshop.internal:27017/users"
+      ExecStart=/bin/node /app/server.js
+      SyslogIdentifier=user
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable user
+  systemd:
+    name: user
+    state: started
+    enabled: yes

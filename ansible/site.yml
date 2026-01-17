@@ -1,0 +1,48 @@
+---
+- name: Setup MongoDB
+  hosts: mongodb
+  become: yes
+  roles:
+    - mongodb
+
+- name: Setup MySQL
+  hosts: mysql
+  become: yes
+  roles:
+    - mysql
+
+- name: Setup Redis
+  hosts: redis
+  become: yes
+  roles:
+    - redis
+
+- name: Setup RabbitMQ
+  hosts: rabbitmq
+  become: yes
+  roles:
+    - rabbitmq
+
+- name: Setup Catalogue
+  hosts: catalogue
+  become: yes
+  roles:
+    - catalogue
+
+- name: Setup User
+  hosts: user
+  become: yes
+  roles:
+    - user
+
+- name: Setup Cart
+  hosts: cart
+  become: yes
+  roles:
+    - cart
+
+- name: Setup Frontend
+  hosts: frontend
+  become: yes
+  roles:
+    - frontend

@@ -1,0 +1,50 @@
+---
+- name: Configure MongoDB YUM repository
+  copy:
+    dest: /etc/yum.repos.d/mongodb.repo
+    content: |
+      [mongodb-org-4.2]
+      name=MongoDB Repository
+      baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/4.2/x86_64/
+      gpgcheck=1
+      enabled=1
+      gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc
+
+- name: Install MongoDB
+  yum:
+    name: mongodb-org
+    state: present
+
+- name: Update MongoDB config to listen on all interfaces
+  lineinfile:
+    path: /etc/mongod.conf
+    regexp: '^  bindIp:'
+    line: '  bindIp: 0.0.0.0'
+
+- name: Start and enable MongoDB
+  systemd:
+    name: mongod
+    state: started
+    enabled: yes
+
+- name: Download catalogue schema
+  get_url:
+    url: https://raw.githubusercontent.com/roboshop-devops-project/mongodb/main/catalogue.js
+    dest: /tmp/catalogue.js
+    mode: '0644'
+
+- name: Load catalogue schema
+  shell: mongo < /tmp/catalogue.js
+  ignore_errors: yes
+
+- name: Download user schema
+  get_url:
+    url: https://raw.githubusercontent.com/roboshop-devops-project/mongodb/main/user.js
+    dest: /tmp/user.js
+    mode: '0644'
+  ignore_errors: yes
+
+- name: Load user schema
+  shell: mongo < /tmp/user.js
+  ignore_errors: yes
+  when: false  # Skip for now since file doesn't exist

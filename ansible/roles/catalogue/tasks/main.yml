@@ -1,0 +1,80 @@
+---
+- name: Remove any existing NodeSource repos
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/yum.repos.d/nodesource-el7.repo
+    - /etc/yum.repos.d/nodesource-el.repo
+
+- name: Yum clean all
+  shell: yum clean all
+
+- name: Enable nodejs14 extras
+  shell: amazon-linux-extras enable nodejs14
+  ignore_errors: yes
+
+- name: Install Node.js
+  yum:
+    name: 
+      - nodejs
+      - npm
+    state: present
+
+- name: Create roboshop user
+  user:
+    name: roboshop
+    comment: "RoboShop Application User"
+    create_home: yes
+
+- name: Create app directory
+  file:
+    path: /app
+    state: directory
+    owner: roboshop
+    group: roboshop
+
+- name: Download catalogue artifact
+  get_url:
+    url: "{{ catalogue_url }}"
+    dest: /tmp/catalogue.zip
+    mode: '0644'
+
+- name: Extract catalogue artifact
+  unarchive:
+    src: /tmp/catalogue.zip
+    dest: /app
+    remote_src: yes
+    owner: roboshop
+    group: roboshop
+
+- name: Install npm dependencies
+  shell: npm install
+  args:
+    chdir: /app
+  become_user: roboshop
+
+- name: Create catalogue systemd service
+  copy:
+    dest: /etc/systemd/system/catalogue.service
+    content: |
+      [Unit]
+      Description=Catalogue Service
+      [Service]
+      User=roboshop
+      Environment=MONGO=true
+      Environment=MONGO_URL="mongodb://mongodb.roboshop.internal:27017/catalogue"
+      ExecStart=/bin/node /app/server.js
+      SyslogIdentifier=catalogue
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable catalogue
+  systemd:
+    name: catalogue
+    state: started
+    enabled: yes

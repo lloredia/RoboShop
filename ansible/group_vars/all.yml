@@ -1,0 +1,13 @@
+---
+# MySQL configuration
+mysql_root_password: "RoboShop@123"
+
+# RabbitMQ configuration
+rabbitmq_user: "roboshop"
+rabbitmq_password: "roboshop123"
+
+# Application artifact URLs
+catalogue_url: "https://roboshop-artifacts.s3.amazonaws.com/catalogue.zip"
+user_url: "https://roboshop-artifacts.s3.amazonaws.com/user.zip"
+cart_url: "https://roboshop-artifacts.s3.amazonaws.com/cart.zip"
+frontend_url: "https://roboshop-artifacts.s3.amazonaws.com/frontend.zip"
