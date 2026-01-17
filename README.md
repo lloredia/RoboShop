@@ -32,34 +32,6 @@ It’s built around a secure network pattern:
 
 
 
----
-
-## Prerequisites
-
-- Terraform >= 1.0
-- Ansible >= 2.9
-- AWS CLI configured (`aws configure`)
-- SSH key pair for EC2 access
-- A workstation with `git` + SSH client
-
----
-
-## Quick start
-
-### 1) Clone
-
-```bash
-git clone https://github.com/lloredia/RoboShop.git
-cd RoboShop
-
-
-
-
-
-
-
-
-
 
 
 
