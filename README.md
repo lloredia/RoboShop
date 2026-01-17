@@ -119,7 +119,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
 - **Redis** - In-memory cache for sessions
 - **RabbitMQ** - Message queue for async processing
 
-## ��� Prerequisites
+## 📋 Prerequisites
 
 ### Software Requirements
 - **Terraform** >= 1.0
@@ -137,7 +137,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
 - Text editor (VS Code recommended)
 - Terminal/Command line access
 
-## ���️ Technology Stack
+## ⚙️  Technology Stack
 
 | Category | Technology | Purpose |
 |----------|------------|---------|
@@ -400,7 +400,7 @@ ssh ec2-user@user.roboshop.internal \
   "curl -s http://localhost:8080/health"
 ```
 
-## ��� Troubleshooting
+## 🛠️ Troubleshooting
 
 ### Common Issues
 
