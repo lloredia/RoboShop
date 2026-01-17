@@ -1,20 +1,11 @@
 <div id="top" align="center">
 
+<img src="docs/stan.png" width="200" alt="RoboShop Mascot" />
+
 # 🚀 RoboShop on AWS — Terraform + Ansible
 
 <em>Production-grade microservices deployment using Infrastructure as Code and automated configuration management.</em>
-
 <br/>
-
-<img src="docs/stan.png" width="200" alt="RoboShop Mascot" />
-
-<br/><br/>
-
-<b>
-Secure private networking • Service discovery • Automated EC2 provisioning • Scalable microservices platform
-</b>
-
-<br/><br/>
 
 <!-- REPO BADGES -->
 <img src="https://img.shields.io/github/last-commit/lloredia/RoboShop?style=flat&logo=git&logoColor=white&color=0080ff" />
@@ -22,10 +13,7 @@ Secure private networking • Service discovery • Automated EC2 provisioning �
 <img src="https://img.shields.io/github/languages/count/lloredia/RoboShop?style=flat&color=0080ff" />
 <img src="https://img.shields.io/github/repo-size/lloredia/RoboShop?style=flat&color=0080ff" />
 
-<br/><br/>
-
-<em>Infrastructure & Automation</em>
-
+<br/>
 <br/>
 
 <img src="https://img.shields.io/badge/Terraform-844FBA.svg?style=flat&logo=Terraform&logoColor=white" />
@@ -34,13 +22,6 @@ Secure private networking • Service discovery • Automated EC2 provisioning �
 <img src="https://img.shields.io/badge/Linux-000000.svg?style=flat&logo=Linux&logoColor=white" />
 <img src="https://img.shields.io/badge/Bash-121011.svg?style=flat&logo=GNU-Bash&logoColor=white" />
 <img src="https://img.shields.io/badge/YAML-CB171E.svg?style=flat&logo=YAML&logoColor=white" />
-
-<br/><br/>
-
-<em>Platform Services</em>
-
-<br/>
-
 <img src="https://img.shields.io/badge/Nginx-009639.svg?style=flat&logo=nginx&logoColor=white" />
 <img src="https://img.shields.io/badge/Node.js-339933.svg?style=flat&logo=node.js&logoColor=white" />
 <img src="https://img.shields.io/badge/MongoDB-47A248.svg?style=flat&logo=mongodb&logoColor=white" />
@@ -51,45 +32,6 @@ Secure private networking • Service discovery • Automated EC2 provisioning �
 </div>
 
 ---
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# RoboShop on AWS — Terraform + Ansible
-
-<p align="center">
-  <img src="docs/stan.png" width="180" alt="RoboShop Mascot" />
-</p>
-
-<p align="center">
-  <b>Production-style RoboShop deployment on AWS using Terraform (IaC) + Ansible (config mgmt).</b><br/>
-  Private networking, service discovery, and automated provisioning of EC2-based microservices + data tier.
-<br/>
-
-
-<p align="center">
-  <img alt="Terraform" src="https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white" />
-  <img alt="Ansible" src="https://img.shields.io/badge/Ansible-Config%20Mgmt-EE0000?logo=ansible&logoColor=white" />
-  <img alt="AWS" src="https://img.shields.io/badge/AWS-EC2%20%7C%20VPC%20%7C%20Route53-FF9900?logo=amazonaws&logoColor=white" />
-  <img alt="Linux" src="https://img.shields.io/badge/Linux-Amazon%20Linux-000000?logo=linux&logoColor=white" />
-  <img alt="License" src="https://img.shields.io/badge/License-MIT-green.svg" />
-</p>
-
----
-
-
-
-
 
 
 
