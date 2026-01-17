@@ -1,3 +1,70 @@
+<div id="top" align="center">
+
+# 🚀 RoboShop on AWS — Terraform + Ansible
+
+<em>Production-grade microservices deployment using Infrastructure as Code and automated configuration management.</em>
+
+<br/>
+
+<img src="docs/stan.png" width="200" alt="RoboShop Mascot" />
+
+<br/><br/>
+
+<b>
+Secure private networking • Service discovery • Automated EC2 provisioning • Scalable microservices platform
+</b>
+
+<br/><br/>
+
+<!-- REPO BADGES -->
+<img src="https://img.shields.io/github/last-commit/lloredia/RoboShop?style=flat&logo=git&logoColor=white&color=0080ff" />
+<img src="https://img.shields.io/github/languages/top/lloredia/RoboShop?style=flat&color=0080ff" />
+<img src="https://img.shields.io/github/languages/count/lloredia/RoboShop?style=flat&color=0080ff" />
+<img src="https://img.shields.io/github/repo-size/lloredia/RoboShop?style=flat&color=0080ff" />
+
+<br/><br/>
+
+<em>Infrastructure & Automation</em>
+
+<br/>
+
+<img src="https://img.shields.io/badge/Terraform-844FBA.svg?style=flat&logo=Terraform&logoColor=white" />
+<img src="https://img.shields.io/badge/Ansible-EE0000.svg?style=flat&logo=Ansible&logoColor=white" />
+<img src="https://img.shields.io/badge/AWS-FF9900.svg?style=flat&logo=Amazon-AWS&logoColor=white" />
+<img src="https://img.shields.io/badge/Linux-000000.svg?style=flat&logo=Linux&logoColor=white" />
+<img src="https://img.shields.io/badge/Bash-121011.svg?style=flat&logo=GNU-Bash&logoColor=white" />
+<img src="https://img.shields.io/badge/YAML-CB171E.svg?style=flat&logo=YAML&logoColor=white" />
+
+<br/><br/>
+
+<em>Platform Services</em>
+
+<br/>
+
+<img src="https://img.shields.io/badge/Nginx-009639.svg?style=flat&logo=nginx&logoColor=white" />
+<img src="https://img.shields.io/badge/Node.js-339933.svg?style=flat&logo=node.js&logoColor=white" />
+<img src="https://img.shields.io/badge/MongoDB-47A248.svg?style=flat&logo=mongodb&logoColor=white" />
+<img src="https://img.shields.io/badge/MySQL-4479A1.svg?style=flat&logo=mysql&logoColor=white" />
+<img src="https://img.shields.io/badge/Redis-DC382D.svg?style=flat&logo=redis&logoColor=white" />
+<img src="https://img.shields.io/badge/RabbitMQ-FF6600.svg?style=flat&logo=rabbitmq&logoColor=white" />
+
+</div>
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # RoboShop on AWS — Terraform + Ansible
 
 <p align="center">
@@ -26,25 +93,7 @@
 
 
 
-
 rweaefafwkjoenmfujinaweiunbrfuiefyuoaweryurfyuhbrgyuebfgyibergyvbyfegyrbgbrf
-
-
-## Tech stack 
-
-### Infrastructure / Automation
-- <img src="https://skillicons.dev/icons?i=terraform" height="18" /> Terraform (HCL)
-- <img src="https://skillicons.dev/icons?i=ansible" height="18" /> Ansible (YAML playbooks)
-- <img src="https://skillicons.dev/icons?i=aws" height="18" /> AWS (EC2, VPC, Route53, IGW, NAT)
-- <img src="https://skillicons.dev/icons?i=bash" height="18" /> Shell / Bash (bootstrap + ops scripts)
-
-### Platform services
-- <img src="https://skillicons.dev/icons?i=nginx" height="18" /> Nginx (frontend / reverse proxy)
-- <img src="https://skillicons.dev/icons?i=nodejs" height="18" /> Node.js (microservices runtime)
-- <img src="https://skillicons.dev/icons?i=mongodb" height="18" /> MongoDB
-- <img src="https://skillicons.dev/icons?i=mysql" height="18" /> MySQL/MariaDB
-- <img src="https://skillicons.dev/icons?i=redis" height="18" /> Redis
-- <img src="https://skillicons.dev/icons?i=rabbitmq" height="18" /> RabbitMQ
 
 
 
