@@ -1,14 +1,4 @@
-
-
-                                                    
-
-
-
 # RoboShop on AWS — Terraform + Ansible  ![Architecture Diagram](docs/stan.png
-#(Microservices Platform)
-
-
-
 
 <p align="center">
   <b>Production-style RoboShop deployment on AWS using Terraform (IaC) + Ansible (config mgmt).</b><br/>
