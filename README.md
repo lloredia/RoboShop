@@ -36,16 +36,12 @@
 
 
 
-rweaefafwkjoenmfujinaweiunbrfuiefyuoaweryurfyuhbrgyuebfgyibergyvbyfegyrbgbrf
-
-
-
 
 # RoboShop E-Commerce Platform - AWS Deployment
 
 A complete microservices-based e-commerce platform deployed on AWS using Infrastructure as Code (Terraform) and Configuration Management (Ansible).
 
-## Architecture Overview
+## 🏗️ Architecture Overview
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         Internet                            │
@@ -168,7 +164,7 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
 - <img src="https://skillicons.dev/icons?i=redis" height="18" /> Redis
 - <img src="https://skillicons.dev/icons?i=rabbitmq" height="18" /> RabbitMQ
 
-## ��� Project Structure
+##📁 Project Structure
 ```
 roboshop-terraform-aws/
 ├── terraform/
@@ -210,7 +206,7 @@ roboshop-terraform-aws/
 └── .gitignore                  # Git ignore rules
 ```
 
-## ��� Getting Started
+## 📋 Getting Started
 
 ### 1. Clone the Repository
 ```bash
@@ -269,7 +265,7 @@ rabbitmq_password  = "roboshop123"
 private_domain = "roboshop.internal"
 ```
 
-## ��� Deployment
+## 🚀 Deployment
 
 ### Phase 1: Infrastructure Deployment (Terraform)
 ```bash
@@ -364,7 +360,7 @@ chmod +x check-services.sh
 
 All services should show `active`.
 
-## ��� Testing
+## 🧪 Testing
 
 ### Access the Application
 
@@ -446,7 +442,7 @@ terraform refresh
 mv terraform.tfstate.backup terraform.tfstate
 ```
 
-## ��� Architecture Decisions
+## 🏗️ Architecture Decisions
 
 ### Why This Architecture?
 
@@ -485,7 +481,7 @@ mv terraform.tfstate.backup terraform.tfstate
 - [ ] IMDSv2 enforcement
 - [ ] Regular security scanning
 
-## ��� Cost Estimation
+##  Cost Estimation
 
 **Monthly AWS Costs (us-east-1):**
 
@@ -504,7 +500,7 @@ mv terraform.tfstate.backup terraform.tfstate
 - Use NAT instance instead of NAT Gateway (~$3.50/month)
 - Consider Reserved Instances for production
 
-## ��� Next Steps
+## 🎯 Next Steps
 
 ### Short Term
 - [ ] Add Application Load Balancer for production access
@@ -527,14 +523,14 @@ mv terraform.tfstate.backup terraform.tfstate
 - [ ] Service mesh implementation (Istio/App Mesh)
 - [ ] Advanced monitoring with Prometheus/Grafana
 
-## ��� Additional Resources
+## 🎯 Additional Resources
 
 - [Terraform AWS Provider Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 - [Ansible Documentation](https://docs.ansible.com/)
 - [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
 - [RoboShop Original Project](https://github.com/instana/robot-shop)
 
-## ��� Contributing
+## 🎯 Contributing
 
 Contributions welcome! Please:
 1. Fork the repository
@@ -546,13 +542,13 @@ Contributions welcome! Please:
 
 This project is for educational purposes.
 
-## ��� Author
+## 💭 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
+- GitHub: [@yourusername](https://github.com/lloredia)
+- LinkedIn: [Your Profile](https://www.linkedin.com/in/amadin-o-8b1143192/)
 
-## ��� Acknowledgments
+## 📄 Acknowledgments
 
 - RoboShop reference architecture
 - AWS documentation and best practices
