@@ -3,7 +3,7 @@
 <!-- HEADER STYLE: CLASSIC -->
 <div align="center">
 
-# ROBOSHOP ON AWS
+
 
 <em>Production-Grade Microservices Deployment with Terraform & Ansible</em>
 
