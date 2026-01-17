@@ -1,4 +1,4 @@
-# --- Count Ansible/YAML as YAML language ---
+# Force Ansible YAML to be counted as YAML
 *.yml linguist-language=YAML
 *.yaml linguist-language=YAML
 
