@@ -5,7 +5,7 @@
 
 
 
-<em>Production-Grade Microservices Deployment with Terraform & Ansible</em>
+
 
 <br/>
 
