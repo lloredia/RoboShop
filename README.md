@@ -1,3 +1,10 @@
+<p align="center">
+  <img src="images/stan.png" width="700" />
+</p>
+
+
+
+
 # RoboShop on AWS — Terraform + Ansible (Microservices Platform)
 
 <p align="center">
