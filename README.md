@@ -463,7 +463,7 @@ mv terraform.tfstate.backup terraform.tfstate
 | MariaDB | Drop-in MySQL replacement | Not official MySQL |
 | Node.js 16 | Stable, compatible | Not latest version |
 
-## ��� Security Considerations
+## 🔐  Security Considerations
 
 ### Implemented
 ✅ Private subnets for all services  
@@ -494,7 +494,7 @@ mv terraform.tfstate.backup terraform.tfstate
 | Data Transfer | Minimal | ~$5 |
 | **Total** | | **~$110/month** |
 
-��� **Cost Optimization:**
+ **Cost Optimization:**
 - Use t3.nano for testing (~$3.80/month each)
 - Stop instances when not in use
 - Use NAT instance instead of NAT Gateway (~$3.50/month)
@@ -538,7 +538,7 @@ Contributions welcome! Please:
 3. Make your changes
 4. Submit a pull request
 
-## ��� License
+## 📄 License
 
 This project is for educational purposes.
 
