@@ -78,14 +78,6 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
          │  Hosted Zone        │
          │  *.roboshop.internal│
          └─────────────────────┘
----
-
-
-
----
-
-
-
          
 ```
 
