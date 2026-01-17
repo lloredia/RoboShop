@@ -183,8 +183,6 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
 - <img src="https://skillicons.dev/icons?i=redis" height="18" /> Redis
 - <img src="https://skillicons.dev/icons?i=rabbitmq" height="18" /> RabbitMQ
 
-> **Languages used in THIS repo:** HCL + Shell (per GitHub language stats). :contentReference[oaicite:3]{index=3}  
-> The application services themselves are Node.js-based, but they’re deployed/configured from this infra repo. :contentReference[oaicite:4]{index=4}
 
 ---
 
