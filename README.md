@@ -27,50 +27,10 @@ It’s built around a secure network pattern:
 - **Private subnets:** App tier + DB tier behind a NAT Gateway
 - **Service discovery:** Route53 Private Hosted Zone (e.g., `*.roboshop.internal`)
 
-Repo summary (from GitHub): “Production-grade microservices e-commerce platform on AWS using Terraform and Ansible… automated deployment of 8 EC2 instances running MongoDB, MySQL, Redis, RabbitMQ, and Node.js microservices.” :contentReference[oaicite:2]{index=2}
 
 ---
 
-## Architecture (high level)
 
-Internet
-|
-Internet Gateway
-|
-Public Subnet
-└─ Bastion Host
-|
-NAT Gateway
-|
-┌───────────────┬────────────────┐
-| | |
-Private App Subnet Private DB Subnet
-
-frontend (nginx) - mongodb
-
-catalogue (node) - mysql/mariadb
-
-user (node) - redis
-
-cart (node) - rabbitmq
-
-php-template
-Copy code
-
-
-
-## Repo layout
-
-.
-├── terraform/ # AWS infrastructure (VPC, EC2, SGs, Route53, etc.)
-├── modules/ # Reusable Terraform modules (vpc, security-groups, route53, ...)
-├── ansible/ # Playbooks + inventory to configure EC2 instances
-├── user-data/ # Bootstrap scripts (cloud-init/user-data)
-├── docs/ # Documentation / notes
-└── README.md
-
-yaml
-Copy code
 
 ---
 
