@@ -71,7 +71,7 @@
          ┌──────────▼──────────┐
          │  Route53 Private    │
          │  Hosted Zone        │
-         │ *.roboshop.internal│
+         │ *.roboshop.internal │
          └─────────────────────┘
          
 ```
