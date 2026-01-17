@@ -9,7 +9,7 @@
 
 <br/>
 
-<img src="docs/stan.png" width="380" alt="RoboShop Mascot" />
+<img src="docs/stan.png" width="180" alt="RoboShop Mascot" />
 
 <br/><br/>
 
