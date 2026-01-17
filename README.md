@@ -9,10 +9,6 @@
   Private networking, service discovery, and automated provisioning of EC2-based microservices + data tier.
 <br/>
 
-<img src="docs/stan.png" width="180" alt="RoboShop Mascot" />
-
-<em>Built with the tools and technologies:</em>
-
 
 <p align="center">
   <img alt="Terraform" src="https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white" />
