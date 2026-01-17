@@ -1,7 +1,7 @@
 # RoboShop on AWS — Terraform + Ansible
 
 <p align="center">
-  <img src="docs/stan.png" width="420" alt="RoboShop Mascot" />
+  <img src="docs/stan.png" width="220" alt="RoboShop Mascot" />
 </p>
 
 <p align="center">
