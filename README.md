@@ -57,28 +57,7 @@ cart (node) - rabbitmq
 php-template
 Copy code
 
----
 
-## Tech stack (with icons)
-
-### Infrastructure / Automation
-- <img src="https://skillicons.dev/icons?i=terraform" height="18" /> Terraform (HCL)
-- <img src="https://skillicons.dev/icons?i=ansible" height="18" /> Ansible (YAML playbooks)
-- <img src="https://skillicons.dev/icons?i=aws" height="18" /> AWS (EC2, VPC, Route53, IGW, NAT)
-- <img src="https://skillicons.dev/icons?i=bash" height="18" /> Shell / Bash (bootstrap + ops scripts)
-
-### Platform services
-- <img src="https://skillicons.dev/icons?i=nginx" height="18" /> Nginx (frontend / reverse proxy)
-- <img src="https://skillicons.dev/icons?i=nodejs" height="18" /> Node.js (microservices runtime)
-- <img src="https://skillicons.dev/icons?i=mongodb" height="18" /> MongoDB
-- <img src="https://skillicons.dev/icons?i=mysql" height="18" /> MySQL/MariaDB
-- <img src="https://skillicons.dev/icons?i=redis" height="18" /> Redis
-- <img src="https://skillicons.dev/icons?i=rabbitmq" height="18" /> RabbitMQ
-
-> **Languages used in THIS repo:** HCL + Shell (per GitHub language stats). :contentReference[oaicite:3]{index=3}  
-> The application services themselves are Node.js-based, but they’re deployed/configured from this infra repo. :contentReference[oaicite:4]{index=4}
-
----
 
 ## Repo layout
 
@@ -186,9 +165,36 @@ A complete microservices-based e-commerce platform deployed on AWS using Infrast
          │  Hosted Zone        │
          │  *.roboshop.internal│
          └─────────────────────┘
+
+---
+
+## Tech stack (with icons)
+
+### Infrastructure / Automation
+- <img src="https://skillicons.dev/icons?i=terraform" height="18" /> Terraform (HCL)
+- <img src="https://skillicons.dev/icons?i=ansible" height="18" /> Ansible (YAML playbooks)
+- <img src="https://skillicons.dev/icons?i=aws" height="18" /> AWS (EC2, VPC, Route53, IGW, NAT)
+- <img src="https://skillicons.dev/icons?i=bash" height="18" /> Shell / Bash (bootstrap + ops scripts)
+
+### Platform services
+- <img src="https://skillicons.dev/icons?i=nginx" height="18" /> Nginx (frontend / reverse proxy)
+- <img src="https://skillicons.dev/icons?i=nodejs" height="18" /> Node.js (microservices runtime)
+- <img src="https://skillicons.dev/icons?i=mongodb" height="18" /> MongoDB
+- <img src="https://skillicons.dev/icons?i=mysql" height="18" /> MySQL/MariaDB
+- <img src="https://skillicons.dev/icons?i=redis" height="18" /> Redis
+- <img src="https://skillicons.dev/icons?i=rabbitmq" height="18" /> RabbitMQ
+
+> **Languages used in THIS repo:** HCL + Shell (per GitHub language stats). :contentReference[oaicite:3]{index=3}  
+> The application services themselves are Node.js-based, but they’re deployed/configured from this infra repo. :contentReference[oaicite:4]{index=4}
+
+---
+
+
+
+         
 ```
 
-## ��� Table of Contents
+##  Table of Contents
 
 - [Features](#features)
 - [Prerequisites](#prerequisites)
