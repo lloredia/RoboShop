@@ -2,7 +2,7 @@
   <img src="docs/stan.png" width="700" />
 </p>
 
-![Architecture Diagram](docs/stan.png)
+#![Architecture Diagram](docs/stan.png)
 
 
 
