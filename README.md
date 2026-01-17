@@ -1,45 +1,36 @@
-
 <div id="top" align="center">
-
 <img src="docs/stan.png" width="200" alt="RoboShop Mascot" />
 
-# 🚀 RoboShop on AWS — Terraform + Ansible
+# RoboShop E-Commerce Platform - AWS Deployment
 
-<em>Production-grade microservices deployment using Infrastructure as Code and automated configuration management.</em>
-<br/>
+<div align="center">
 
-<!-- REPO BADGES -->
-<img src="https://img.shields.io/github/last-commit/lloredia/RoboShop?style=flat&logo=git&logoColor=white&color=0080ff" />
-<img src="https://img.shields.io/github/languages/top/lloredia/RoboShop?style=flat&color=0080ff" />
-<img src="https://img.shields.io/github/languages/count/lloredia/RoboShop?style=flat&color=0080ff" />
-<img src="https://img.shields.io/github/repo-size/lloredia/RoboShop?style=flat&color=0080ff" />
+![Terraform](https://img.shields.io/badge/Terraform-1.0+-623CE4?style=for-the-badge&logo=terraform&logoColor=white)
+![Ansible](https://img.shields.io/badge/Ansible-2.9+-EE0000?style=for-the-badge&logo=ansible&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-Cloud-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
-<br/>
-<br/>
+![Node.js](https://img.shields.io/badge/Node.js-16-339933?style=flat-square&logo=node.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4.2-47A248?style=flat-square&logo=mongodb&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-5.7-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-6.x-DC382D?style=flat-square&logo=redis&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-latest-FF6600?style=flat-square&logo=rabbitmq&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-latest-009639?style=flat-square&logo=nginx&logoColor=white)
 
-<img src="https://img.shields.io/badge/Terraform-844FBA.svg?style=flat&logo=Terraform&logoColor=white" />
-<img src="https://img.shields.io/badge/Ansible-EE0000.svg?style=flat&logo=Ansible&logoColor=white" />
-<img src="https://img.shields.io/badge/AWS-FF9900.svg?style=flat&logo=Amazon-AWS&logoColor=white" />
-<img src="https://img.shields.io/badge/Linux-000000.svg?style=flat&logo=Linux&logoColor=white" />
-<img src="https://img.shields.io/badge/Bash-121011.svg?style=flat&logo=GNU-Bash&logoColor=white" />
-<img src="https://img.shields.io/badge/YAML-CB171E.svg?style=flat&logo=YAML&logoColor=white" />
-<img src="https://img.shields.io/badge/Nginx-009639.svg?style=flat&logo=nginx&logoColor=white" />
-<img src="https://img.shields.io/badge/Node.js-339933.svg?style=flat&logo=node.js&logoColor=white" />
-<img src="https://img.shields.io/badge/MongoDB-47A248.svg?style=flat&logo=mongodb&logoColor=white" />
-<img src="https://img.shields.io/badge/MySQL-4479A1.svg?style=flat&logo=mysql&logoColor=white" />
-<img src="https://img.shields.io/badge/Redis-DC382D.svg?style=flat&logo=redis&logoColor=white" />
-<img src="https://img.shields.io/badge/RabbitMQ-FF6600.svg?style=flat&logo=rabbitmq&logoColor=white" />
+[![Last Commit](https://img.shields.io/github/last-commit/lloredia/RoboShop?style=flat-square)](https://github.com/lloredia/RoboShop/commits/master)
+[![Issues](https://img.shields.io/github/issues/lloredia/RoboShop?style=flat-square)](https://github.com/lloredia/RoboShop/issues)
+[![Stars](https://img.shields.io/github/stars/lloredia/RoboShop?style=flat-square)](https://github.com/lloredia/RoboShop/stargazers)
+[![Forks](https://img.shields.io/github/forks/lloredia/RoboShop?style=flat-square)](https://github.com/lloredia/RoboShop/network/members)
+
+**A complete microservices-based e-commerce platform deployed on AWS using Infrastructure as Code**
+
 
 </div>
 
 ---
 
 
-
-
-# RoboShop E-Commerce Platform - AWS Deployment
-
-A complete microservices-based e-commerce platform deployed on AWS using Infrastructure as Code (Terraform) and Configuration Management (Ansible).
 
 ## 🏗️ Architecture Overview
 ```
