@@ -31,51 +31,140 @@
 
 ---
 
-
-
 ## 🏗️ Architecture Overview
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         Internet                            │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-            ┌────────▼────────┐
-            │ Internet Gateway│
-            └────────┬────────┘
-                     │
-        ┌────────────▼────────────┐
-        │    Public Subnet        │
-        │  ┌──────────────────┐   │
-        │  │  Bastion Host    │   │
-        │  └──────────────────┘   │
-        └────────────┬────────────┘
-                     │
-        ┌────────────▼──────────────────────────┐
-        │         NAT Gateway                   │
-        └────────────┬──────────────────────────┘
-                     │
-     ┌───────────────┴──────────────────┐
-     │                                  │
-┌────▼─────────────┐          ┌─────────▼──────────┐
-│ Private App      │          │ Private DB         │
-│ Subnet           │          │ Subnet             │
-│                  │          │                    │
-│ - Frontend       │          │ - MongoDB          │
-│ - Catalogue      │          │ - MySQL            │
-│ - User           │          │ - Redis            │
-│ - Cart           │          │ - RabbitMQ         │
-└──────────────────┘          └────────────────────┘
-         │                             │
-         └──────────┬──────────────────┘
-                    │
-         ┌──────────▼──────────┐
-         │  Route53 Private    │
-         │  Hosted Zone        │
-         │ *.roboshop.internal │
-         └─────────────────────┘
-         
+
+```mermaid
+flowchart TB
+    subgraph Internet["🌐 Internet"]
+        Users((Users))
+    end
+
+    subgraph VPC["☁️ AWS VPC (10.0.0.0/16)"]
+        
+        IGW[🚪 Internet Gateway]
+        
+        subgraph PublicSubnet["Public Subnet (10.0.1.0/24)"]
+            Bastion[🖥️ Bastion Host]
+        end
+        
+        NAT[🔀 NAT Gateway]
+        
+        subgraph PrivateAppSubnet["Private App Subnet (10.0.10.0/24)"]
+            Frontend[🌐 Frontend\nNginx]
+            Catalogue[📦 Catalogue\nNode.js]
+            User[👤 User\nNode.js]
+            Cart[🛒 Cart\nNode.js]
+            Shipping[🚚 Shipping\nJava]
+            Payment[💳 Payment\nPython]
+        end
+        
+        subgraph PrivateDBSubnet["Private DB Subnet (10.0.20.0/24)"]
+            MongoDB[(🍃 MongoDB)]
+            MySQL[(🐬 MySQL)]
+            Redis[(⚡ Redis)]
+            RabbitMQ[🐰 RabbitMQ]
+        end
+        
+        subgraph DNS["Route53 Private Hosted Zone"]
+            R53[📍 *.roboshop.internal]
+        end
+    end
+
+    Users --> IGW
+    IGW --> Bastion
+    IGW -.-> NAT
+    Bastion -.->|SSH| PrivateAppSubnet
+    PrivateAppSubnet --> NAT
+    NAT --> IGW
+    
+    Frontend --> Catalogue
+    Frontend --> User
+    Frontend --> Cart
+    Frontend --> Shipping
+    Frontend --> Payment
+    
+    Catalogue --> MongoDB
+    User --> MongoDB
+    User --> Redis
+    Cart --> Redis
+    Cart --> RabbitMQ
+    Shipping --> MySQL
+    Payment --> RabbitMQ
+    
+    PrivateAppSubnet -.-> R53
+    PrivateDBSubnet -.-> R53
 ```
 
+### Service Communication Flow
+
+```mermaid
+flowchart LR
+    subgraph FE["Frontend Layer"]
+        Nginx[🌐 Nginx\nPort 80]
+    end
+
+    subgraph APP["Application Layer"]
+        CAT[📦 Catalogue\n:8080]
+        USR[👤 User\n:8080]
+        CRT[🛒 Cart\n:8080]
+        SHP[🚚 Shipping\n:8080]
+        PAY[💳 Payment\n:8080]
+    end
+
+    subgraph DATA["Data Layer"]
+        MONGO[(MongoDB\n:27017)]
+        MYSQL[(MySQL\n:3306)]
+        REDIS[(Redis\n:6379)]
+        RABBIT[RabbitMQ\n:5672]
+    end
+
+    Nginx -->|/api/catalogue| CAT
+    Nginx -->|/api/user| USR
+    Nginx -->|/api/cart| CRT
+    Nginx -->|/api/shipping| SHP
+    Nginx -->|/api/payment| PAY
+
+    CAT --> MONGO
+    USR --> MONGO
+    USR --> REDIS
+    CRT --> REDIS
+    CRT --> RABBIT
+    SHP --> MYSQL
+    PAY --> RABBIT
+```
+
+### Deployment Pipeline
+
+```mermaid
+flowchart LR
+    subgraph IaC["Infrastructure as Code"]
+        TF[🏗️ Terraform\nProvision AWS]
+        ANS[📜 Ansible\nConfigure Services]
+    end
+
+    subgraph Infra["AWS Infrastructure"]
+        VPC[VPC + Subnets]
+        EC2[EC2 Instances]
+        SG[Security Groups]
+        RT53[Route53 DNS]
+    end
+
+    subgraph Config["Service Configuration"]
+        DB[Database Setup]
+        APP[App Deployment]
+        SVC[Service Start]
+    end
+
+    TF -->|terraform apply| VPC
+    TF -->|terraform apply| EC2
+    TF -->|terraform apply| SG
+    TF -->|terraform apply| RT53
+    
+    EC2 --> ANS
+    ANS -->|ansible-playbook| DB
+    ANS -->|ansible-playbook| APP
+    ANS -->|ansible-playbook| SVC
+```
 
 ##  Table of Contents
 
@@ -537,8 +626,8 @@ This project is for educational purposes.
 ## 💭 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/lloredia)
-- LinkedIn: [Your Profile](https://www.linkedin.com/in/amadin-o-8b1143192/)
+- GitHub: [lloredia](https://github.com/lloredia)
+- LinkedIn: [Amadin Oredia](https://www.linkedin.com/in/amadin-o-8b1143192/)
 
 ## 📄 Acknowledgments
 
