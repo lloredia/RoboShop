@@ -245,7 +245,7 @@ flowchart LR
 - <img src="https://skillicons.dev/icons?i=redis" height="18" /> Redis
 - <img src="https://skillicons.dev/icons?i=rabbitmq" height="18" /> RabbitMQ
 
-##📁 Project Structure
+## 📁 Project Structure
 ```
 roboshop-terraform-aws/
 ├── terraform/
