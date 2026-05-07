@@ -625,7 +625,7 @@ This project is for educational purposes.
 
 ## 💭 Author
 
-**Your Name**
+** Lesley **
 - GitHub: [lloredia](https://github.com/lloredia)
 - LinkedIn: [Amadin Oredia](https://www.linkedin.com/in/amadin-o-8b1143192/)
 
