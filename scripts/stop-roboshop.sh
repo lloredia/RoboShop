@@ -116,11 +116,13 @@ get_instances() {
     
     print_info "Querying instances with tag ${TAG_KEY}=${TAG_VALUE} in state 'running'..."
     
-    # Query AWS for instances
+    # Query AWS for instances. Backticks are JMESPath syntax, not command substitution.
+    # shellcheck disable=SC2016
+    local query='Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0],State.Name,PrivateIpAddress,PublicIpAddress]'
     INSTANCES=$(aws ec2 describe-instances \
         --region "${REGION}" \
         --filters "${filter_tag}" "${filter_state}" \
-        --query 'Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0],State.Name,PrivateIpAddress,PublicIpAddress]' \
+        --query "${query}" \
         --output text)
     
     if [[ -z "${INSTANCES}" ]]; then
@@ -185,14 +187,13 @@ stop_instances() {
     
     print_header "Stopping instances"
     
-    # Extract instance IDs
-    INSTANCE_IDS=$(echo "${INSTANCES}" | awk '{print $1}')
-    
+    mapfile -t INSTANCE_IDS < <(echo "${INSTANCES}" | awk '{print $1}')
+
     print_info "Stopping instances..."
-    
+
     if aws ec2 stop-instances \
         --region "${REGION}" \
-        --instance-ids ${INSTANCE_IDS} \
+        --instance-ids "${INSTANCE_IDS[@]}" \
         --output json > /dev/null 2>&1; then
         
         print_success "Stop command sent successfully"
@@ -202,12 +203,12 @@ stop_instances() {
         # Wait for instances to stop
         if aws ec2 wait instance-stopped \
             --region "${REGION}" \
-            --instance-ids ${INSTANCE_IDS} 2>/dev/null; then
+            --instance-ids "${INSTANCE_IDS[@]}" 2>/dev/null; then
             
             print_success "All instances stopped successfully!"
         else
             print_warning "Wait timeout - instances may still be stopping"
-            print_info "Check status with: aws ec2 describe-instances --instance-ids ${INSTANCE_IDS}"
+            print_info "Check status with: aws ec2 describe-instances --instance-ids ${INSTANCE_IDS[*]}"
         fi
     else
         print_error "Failed to stop instances"

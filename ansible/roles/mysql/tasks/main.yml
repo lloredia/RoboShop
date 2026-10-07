@@ -1,35 +1,89 @@
 ---
-- name: Install MariaDB (MySQL compatible)
-  yum:
-    name: 
+- name: Enable MariaDB 10.5
+  ansible.builtin.command: amazon-linux-extras enable mariadb10.5
+  register: mysql_extra
+  changed_when: "'already enabled' not in mysql_extra.stdout"
+
+- name: Install MariaDB
+  ansible.builtin.yum:
+    name:
       - mariadb-server
-      - MySQL-python
     state: present
 
 - name: Start and enable MariaDB
-  systemd:
+  ansible.builtin.systemd:
     name: mariadb
     state: started
-    enabled: yes
+    enabled: true
 
-- name: Set MariaDB root password
-  shell: |
-    mysqladmin -u root password '{{ mysql_root_password }}' 2>/dev/null || true
+- name: Set the local root password when socket login still works
+  ansible.builtin.shell: |
+    set -euo pipefail
+    mysql --protocol=socket -uroot <<SQL
+    ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';
+    DELETE FROM mysql.user WHERE User='';
+    DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+    FLUSH PRIVILEGES;
+    SQL
+  args:
+    executable: /bin/bash
+  register: mysql_root_init
+  changed_when: mysql_root_init.rc == 0
+  failed_when: false
   no_log: true
 
-- name: Create shipping database
-  shell: |
-    mysql -uroot -p'{{ mysql_root_password }}' -e "CREATE DATABASE IF NOT EXISTS cities;" 2>/dev/null || true
+- name: Create the roboshop config directory
+  ansible.builtin.file:
+    path: /etc/roboshop
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Write a root client defaults file
+  ansible.builtin.copy:
+    dest: /etc/roboshop/mysql-root.cnf
+    mode: "0600"
+    owner: root
+    group: root
+    content: |
+      [client]
+      user=root
+      password={{ mysql_root_password }}
+      protocol=socket
   no_log: true
 
-- name: Download MySQL schema
-  get_url:
-    url: https://raw.githubusercontent.com/roboshop-devops-project/mysql/main/shipping.sql
+- name: Download the shipping schema
+  ansible.builtin.get_url:
+    url: "{{ shipping_schema_url }}"
     dest: /tmp/shipping.sql
-    mode: '0644'
-  ignore_errors: yes
+    mode: "0644"
 
-- name: Load shipping schema
-  shell: mysql -uroot -p'{{ mysql_root_password }}' < /tmp/shipping.sql 2>/dev/null || true
+- name: Drop upstream wildcard GRANT statements
+  ansible.builtin.shell: grep -viE '^[[:space:]]*GRANT[[:space:]]' /tmp/shipping.sql > /tmp/shipping.filtered.sql
+  args:
+    executable: /bin/bash
+  changed_when: true
+
+- name: Load the shipping schema
+  ansible.builtin.shell: mysql --defaults-extra-file=/etc/roboshop/mysql-root.cnf < /tmp/shipping.filtered.sql
+  args:
+    executable: /bin/bash
+  changed_when: true
   no_log: true
-  ignore_errors: yes
+
+- name: Create the shipping account for the app subnet only
+  ansible.builtin.shell: |
+    set -euo pipefail
+    mysql --defaults-extra-file=/etc/roboshop/mysql-root.cnf <<SQL
+    DROP USER IF EXISTS '{{ mysql_app_user }}'@'%';
+    DROP USER IF EXISTS '{{ mysql_app_user }}'@'localhost';
+    CREATE USER IF NOT EXISTS '{{ mysql_app_user }}'@'{{ mysql_app_host }}' IDENTIFIED BY '{{ mysql_app_password }}';
+    ALTER USER '{{ mysql_app_user }}'@'{{ mysql_app_host }}' IDENTIFIED BY '{{ mysql_app_password }}';
+    GRANT SELECT, INSERT, UPDATE, DELETE ON cities.* TO '{{ mysql_app_user }}'@'{{ mysql_app_host }}';
+    FLUSH PRIVILEGES;
+    SQL
+  args:
+    executable: /bin/bash
+  changed_when: true
+  no_log: true

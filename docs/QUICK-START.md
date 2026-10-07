@@ -1,5 +1,7 @@
 # 🚀 RoboShop Quick Start
 
+The current path is the Quick Start in the repository README. This note describes an earlier phase-1-only layout. SSH access is `admin_cidr`, and database passwords are generated into SSM rather than typed into tfvars.
+
 ## What You Have
 
 I've created a **production-grade RoboShop e-commerce platform** using Terraform on AWS. This is Phase 1 (Foundation) - the network infrastructure and security layer.
@@ -75,7 +77,7 @@ nano terraform.tfvars  # Edit with your values
 ```
 
 **Required changes:**
-- `allowed_ssh_cidr`: Your IP (find with `curl ifconfig.me`)
+- `admin_cidr`: Your IP (find with `curl ifconfig.me`)
 - `ssh_public_key`: Paste from step 2
 - `tags.Owner`: Your name
 
@@ -239,7 +241,7 @@ terraform validate
 
 **Common issues:**
 - SSH key errors → Regenerate key
-- IP access denied → Update allowed_ssh_cidr
+- IP access denied → Update admin_cidr
 - Resource already exists → Change project_name or environment
 
 **Test commands:**

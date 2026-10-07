@@ -1,0 +1,10 @@
+---
+profile: basic
+exclude_paths:
+  - .github
+  - .terraform
+  - terraform/.terraform
+warn_list:
+  - experimental
+skip_list:
+  - yaml[line-length]

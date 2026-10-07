@@ -1,0 +1,126 @@
+---
+- name: Install Java 8 and Maven
+  ansible.builtin.yum:
+    name:
+      - java-1.8.0-openjdk
+      - java-1.8.0-openjdk-devel
+      - maven
+      - unzip
+    state: present
+
+- name: Create roboshop user
+  ansible.builtin.user:
+    name: roboshop
+    comment: RoboShop Application User
+    create_home: true
+    shell: /bin/bash
+
+- name: Create app directory
+  ansible.builtin.file:
+    path: /app
+    state: directory
+    owner: roboshop
+    group: roboshop
+    mode: "0755"
+
+- name: Download shipping artifact
+  ansible.builtin.get_url:
+    url: "{{ shipping_url }}"
+    dest: /tmp/shipping.zip
+    mode: "0644"
+
+- name: Extract shipping artifact
+  ansible.builtin.unarchive:
+    src: /tmp/shipping.zip
+    dest: /app
+    remote_src: true
+    owner: roboshop
+    group: roboshop
+
+- name: Read the database user from the environment
+  ansible.builtin.replace:
+    path: /app/src/main/java/com/instana/robotshop/shipping/JpaConfig.java
+    regexp: 'bob\.username\("shipping"\);'
+    replace: 'bob.username(System.getenv("DB_USER"));'
+
+- name: Read the database password from the environment
+  ansible.builtin.replace:
+    path: /app/src/main/java/com/instana/robotshop/shipping/JpaConfig.java
+    regexp: 'bob\.password\("[^"]*"\);'
+    replace: 'bob.password(System.getenv("DB_PASS"));'
+
+- name: Refuse to build if the lab password is still in source
+  ansible.builtin.command: grep -q RoboShop@1 /app/src/main/java/com/instana/robotshop/shipping/JpaConfig.java
+  register: shipping_lab_password
+  changed_when: false
+  failed_when: shipping_lab_password.rc == 0
+
+- name: Build the shipping jar
+  ansible.builtin.command: mvn -B -DskipTests package
+  args:
+    chdir: /app
+  become: true
+  become_user: roboshop
+  changed_when: true
+
+- name: Install the shipping jar
+  ansible.builtin.shell: |
+    set -euo pipefail
+    jar="$(find /app/target -type f -name 'shipping-*.jar' ! -name '*sources*' ! -name '*javadoc*' | head -n 1)"
+    test -n "${jar}"
+    install -o roboshop -g roboshop -m 0644 "${jar}" /app/shipping.jar
+  args:
+    executable: /bin/bash
+  changed_when: true
+
+- name: Create the roboshop config directory
+  ansible.builtin.file:
+    path: /etc/roboshop
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Write shipping environment file
+  ansible.builtin.copy:
+    dest: /etc/roboshop/shipping.env
+    owner: root
+    group: root
+    mode: "0600"
+    content: |
+      CART_ENDPOINT=cart.{{ private_domain }}:8080
+      DB_HOST=mysql.{{ private_domain }}
+      DB_USER={{ mysql_app_user }}
+      DB_PASS={{ mysql_app_password }}
+  no_log: true
+
+- name: Create shipping systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/shipping.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Shipping Service
+      After=network.target
+
+      [Service]
+      User=roboshop
+      WorkingDirectory=/app
+      EnvironmentFile=/etc/roboshop/shipping.env
+      ExecStart=/usr/bin/java -jar /app/shipping.jar
+      Restart=always
+      RestartSec=10
+      SyslogIdentifier=shipping
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start and enable shipping
+  ansible.builtin.systemd:
+    name: shipping
+    state: started
+    enabled: true

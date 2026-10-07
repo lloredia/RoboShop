@@ -1,184 +1,113 @@
 #!/bin/bash
-
 ##############################################
-# RabbitMQ Installation Script for RoboShop
-# OS: Amazon Linux 2 / RHEL 8
+# RabbitMQ for RoboShop
+# The default guest account is removed.
+# The application user is not a cluster administrator.
 ##############################################
 
-set -e
+set -euo pipefail
 
 LOG_FILE="/var/log/roboshop-rabbitmq-install.log"
-exec > >(tee -a $LOG_FILE)
-exec 2>&1
+exec > >(tee -a "${LOG_FILE}") 2>&1
 
 echo "========================================="
-echo "RabbitMQ Installation Started: $(date)"
+echo "RabbitMQ installation started: $(date)"
 echo "========================================="
 
-print_status() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+if [[ -f /etc/roboshop/bootstrap.env ]]; then
+  # shellcheck disable=SC1091
+  set -a
+  # shellcheck disable=SC1091
+  . /etc/roboshop/bootstrap.env
+  set +a
+fi
+
+: "${SSM_PREFIX:?SSM_PREFIX is required}"
+: "${AWS_DEFAULT_REGION:?AWS_DEFAULT_REGION is required}"
+
+fetch_ssm() {
+  local name="$1"
+  local value
+  value="$(aws ssm get-parameter \
+    --name "${name}" \
+    --with-decryption \
+    --query 'Parameter.Value' \
+    --output text \
+    --region "${AWS_DEFAULT_REGION}")"
+  if [[ -z "${value}" || "${value}" == "None" ]]; then
+    echo "Failed to read SSM parameter ${name}" >&2
+    exit 1
+  fi
+  printf '%s' "${value}"
 }
 
-check_status() {
-    if [ $? -eq 0 ]; then
-        print_status "✓ SUCCESS: $1"
-    else
-        print_status "✗ FAILED: $1"
-        exit 1
-    fi
-}
-
-# Install Erlang (RabbitMQ dependency)
-print_status "Installing Erlang..."
-curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash
+yum install -y awscli curl
+curl -fsSL https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash
 yum install -y erlang
-check_status "Erlang installation"
-
-# Add RabbitMQ repository
-print_status "Adding RabbitMQ repository..."
-curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash
-check_status "RabbitMQ repository added"
-
-# Install RabbitMQ
-print_status "Installing RabbitMQ..."
+curl -fsSL https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash
 yum install -y rabbitmq-server
-check_status "RabbitMQ installation"
 
-# Enable and start RabbitMQ service
-print_status "Starting RabbitMQ service..."
 systemctl enable rabbitmq-server
 systemctl start rabbitmq-server
-check_status "RabbitMQ service start"
-
-# Wait for RabbitMQ to be ready
-print_status "Waiting for RabbitMQ to be ready..."
 sleep 10
 
-# Enable RabbitMQ management plugin
-print_status "Enabling RabbitMQ management plugin..."
 rabbitmq-plugins enable rabbitmq_management
-check_status "Management plugin enabled"
+systemctl restart rabbitmq-server
+sleep 10
 
-# Create RoboShop user
-RABBITMQ_USER=${RABBITMQ_USER:-roboshop}
-RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-roboshop123}
+app_user="$(fetch_ssm "${SSM_PREFIX}/rabbitmq/user")"
+app_password="$(fetch_ssm "${SSM_PREFIX}/rabbitmq/password")"
 
-print_status "Creating RabbitMQ user..."
-rabbitmqctl add_user $RABBITMQ_USER $RABBITMQ_PASSWORD || true
-rabbitmqctl set_user_tags $RABBITMQ_USER administrator
-rabbitmqctl set_permissions -p / $RABBITMQ_USER ".*" ".*" ".*"
-check_status "RabbitMQ user creation"
+if rabbitmqctl list_users | awk '{print $1}' | grep -qx 'guest'; then
+  rabbitmqctl delete_user guest
+fi
 
-# Configure RabbitMQ for remote access
-print_status "Configuring RabbitMQ for remote access..."
-cat > /etc/rabbitmq/rabbitmq.conf <<EOF
+rabbitmqctl add_user "${app_user}" "${app_password}"
+# management can open the UI from the bastion. It cannot administer the cluster.
+rabbitmqctl set_user_tags "${app_user}" management
+rabbitmqctl set_permissions -p / "${app_user}" ".*" ".*" ".*"
+
+install -d -m 0755 /etc/rabbitmq
+cat > /etc/rabbitmq/rabbitmq.conf <<'EOF'
 listeners.tcp.default = 5672
 management.tcp.port = 15672
 management.tcp.ip = 0.0.0.0
-loopback_users = none
-EOF
-check_status "RabbitMQ remote access configuration"
-
-# Restart RabbitMQ to apply changes
-print_status "Restarting RabbitMQ..."
-systemctl restart rabbitmq-server
-sleep 10
-check_status "RabbitMQ restart"
-
-# Configure firewall
-if systemctl is-active --quiet firewalld; then
-    print_status "Configuring firewall..."
-    firewall-cmd --permanent --add-port=5672/tcp
-    firewall-cmd --permanent --add-port=15672/tcp
-    firewall-cmd --reload
-    check_status "Firewall configuration"
-fi
-
-# Create vhost for RoboShop
-print_status "Creating RoboShop vhost..."
-rabbitmqctl add_vhost roboshop || true
-rabbitmqctl set_permissions -p roboshop $RABBITMQ_USER ".*" ".*" ".*"
-check_status "Vhost creation"
-
-# Install monitoring script
-print_status "Installing monitoring script..."
-cat > /usr/local/bin/rabbitmq-monitor.sh <<'MONITOR_SCRIPT'
-#!/bin/bash
-echo "========================================="
-echo "RabbitMQ Status: $(date)"
-echo "========================================="
-echo "Service Status: $(systemctl is-active rabbitmq-server)"
-rabbitmqctl status | grep -A 5 "Status of node"
-echo ""
-rabbitmqctl list_queues
-echo ""
-rabbitmqctl list_users
-echo "========================================="
-MONITOR_SCRIPT
-
-chmod +x /usr/local/bin/rabbitmq-monitor.sh
-check_status "Monitoring script creation"
-
-# Setup backup script
-print_status "Installing backup script..."
-mkdir -p /backup/rabbitmq
-
-cat > /usr/local/bin/rabbitmq-backup.sh <<BACKUP_SCRIPT
-#!/bin/bash
-BACKUP_DIR="/backup/rabbitmq"
-DATE=\$(date +%Y%m%d_%H%M%S)
-
-# Export definitions
-curl -u $RABBITMQ_USER:$RABBITMQ_PASSWORD \
-     http://localhost:15672/api/definitions \
-     -o \$BACKUP_DIR/definitions_\$DATE.json
-
-# Compress old backups
-find \$BACKUP_DIR -name "definitions_*.json" -mtime +1 -exec gzip {} \;
-
-# Remove old backups
-find \$BACKUP_DIR -name "definitions_*.json.gz" -mtime +7 -delete
-BACKUP_SCRIPT
-
-chmod +x /usr/local/bin/rabbitmq-backup.sh
-check_status "Backup script installation"
-
-# Setup daily backup
-print_status "Setting up daily backup..."
-(crontab -l 2>/dev/null; echo "0 2 * * * /usr/local/bin/rabbitmq-backup.sh") | crontab -
-check_status "Cron job setup"
-
-# Configure resource limits
-print_status "Configuring resource limits..."
-cat >> /etc/rabbitmq/rabbitmq.conf <<EOF
-
-# Resource limits
 vm_memory_high_watermark.relative = 0.6
 disk_free_limit.absolute = 2GB
 EOF
-check_status "Resource limits configuration"
 
-# Restart to apply all changes
 systemctl restart rabbitmq-server
 sleep 10
 
-# Print RabbitMQ info
-print_status "RabbitMQ installation completed!"
-echo "========================================="
-echo "RabbitMQ Version: $(rabbitmqctl version)"
-echo "RabbitMQ Status: $(systemctl is-active rabbitmq-server)"
-echo "AMQP Port: 5672"
-echo "Management Port: 15672"
-echo "Username: $RABBITMQ_USER"
-echo "Password: $RABBITMQ_PASSWORD"
-echo "VHost: roboshop"
-echo ""
-echo "Management UI: http://$(hostname -I | awk '{print $1}'):15672"
-echo "Monitor: /usr/local/bin/rabbitmq-monitor.sh"
-echo "========================================="
+install -d -m 0750 /etc/roboshop
+umask 077
+cat > /etc/roboshop/rabbitmq.netrc <<EOF
+machine localhost
+login ${app_user}
+password ${app_password}
+EOF
+chmod 0600 /etc/roboshop/rabbitmq.netrc
 
-print_status "Installation log saved to: $LOG_FILE"
+install -d -m 0750 /backup/rabbitmq
+cat > /usr/local/bin/rabbitmq-backup.sh <<'EOF'
+#!/bin/bash
+set -euo pipefail
+backup_dir="/backup/rabbitmq"
+stamp="$(date +%Y%m%d_%H%M%S)"
+curl --netrc-file /etc/roboshop/rabbitmq.netrc \
+  -fsS "http://localhost:15672/api/definitions" \
+  -o "${backup_dir}/definitions_${stamp}.json"
+find "${backup_dir}" -name 'definitions_*.json' -mtime +1 -exec gzip {} \;
+find "${backup_dir}" -name 'definitions_*.json.gz' -mtime +7 -delete
+EOF
+chmod 0750 /usr/local/bin/rabbitmq-backup.sh
 
-echo "========================================="
-echo "RabbitMQ Installation Completed: $(date)"
-echo "========================================="
+tmp_cron="$(mktemp)"
+crontab -l 2>/dev/null | grep -v 'rabbitmq-backup.sh' > "${tmp_cron}" || true
+echo "0 2 * * * /usr/local/bin/rabbitmq-backup.sh" >> "${tmp_cron}"
+crontab "${tmp_cron}"
+rm -f "${tmp_cron}"
+
+unset app_password
+echo "RabbitMQ user ${app_user} is ready. The guest account is not present."
+echo "RabbitMQ installation completed: $(date)"

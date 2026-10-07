@@ -1,6 +1,6 @@
 ---
 - name: Install Redis from Amazon Linux Extras
-  shell: amazon-linux-extras install redis6 -y
+  ansible.builtin.command: amazon-linux-extras install redis6 -y
   args:
     creates: /usr/bin/redis-server
 

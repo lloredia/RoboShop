@@ -151,6 +151,18 @@ resource "aws_route_table_association" "private_db" {
   route_table_id = aws_route_table.private.id
 }
 
+# Lock down the VPC default security group so it allows no traffic.
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-default-sg"
+    }
+  )
+}
+
 # VPC Flow Logs (optional but recommended for security)
 resource "aws_flow_log" "main" {
   count = var.enable_flow_logs ? 1 : 0
@@ -172,7 +184,7 @@ resource "aws_cloudwatch_log_group" "flow_logs" {
   count = var.enable_flow_logs ? 1 : 0
 
   name              = "/aws/vpc/${var.project_name}-${var.environment}"
-  retention_in_days = 7
+  retention_in_days = 365
 
   tags = var.tags
 }

@@ -61,7 +61,7 @@ variable "user_data_replace_on_change" {
 variable "enable_detailed_monitoring" {
   description = "Enable detailed CloudWatch monitoring"
   type        = bool
-  default     = false
+  default     = true
 }
 
 # Volume Configuration
@@ -97,9 +97,9 @@ variable "enable_encryption" {
 
 # IAM Configuration
 variable "iam_instance_profile" {
-  description = "IAM instance profile name"
+  description = "IAM instance profile name. Null leaves the instance without a profile."
   type        = string
-  default     = ""
+  default     = null
 }
 
 # CloudWatch Configuration
@@ -112,7 +112,7 @@ variable "enable_cloudwatch_logs" {
 variable "log_retention_days" {
   description = "CloudWatch log retention in days"
   type        = number
-  default     = 7
+  default     = 365
 }
 
 # Alarms Configuration

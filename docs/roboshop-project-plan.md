@@ -1,5 +1,7 @@
 # RoboShop Terraform AWS Deployment - Portfolio Project
 
+The live footprint is 12 EC2 instances (bastion, four data services, seven application services). The README is the source of truth. This plan is the original design note.
+
 ## Architecture Overview
 
 ```

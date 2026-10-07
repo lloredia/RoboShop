@@ -1,48 +1,66 @@
 ---
 - name: Setup MongoDB
   hosts: mongodb
-  become: yes
+  become: true
   roles:
     - mongodb
 
 - name: Setup MySQL
   hosts: mysql
-  become: yes
+  become: true
   roles:
     - mysql
 
 - name: Setup Redis
   hosts: redis
-  become: yes
+  become: true
   roles:
     - redis
 
 - name: Setup RabbitMQ
   hosts: rabbitmq
-  become: yes
+  become: true
   roles:
     - rabbitmq
 
 - name: Setup Catalogue
   hosts: catalogue
-  become: yes
+  become: true
   roles:
     - catalogue
 
 - name: Setup User
   hosts: user
-  become: yes
+  become: true
   roles:
     - user
 
 - name: Setup Cart
   hosts: cart
-  become: yes
+  become: true
   roles:
     - cart
 
+- name: Setup Shipping
+  hosts: shipping
+  become: true
+  roles:
+    - shipping
+
+- name: Setup Payment
+  hosts: payment
+  become: true
+  roles:
+    - payment
+
+- name: Setup Dispatch
+  hosts: dispatch
+  become: true
+  roles:
+    - dispatch
+
 - name: Setup Frontend
   hosts: frontend
-  become: yes
+  become: true
   roles:
     - frontend

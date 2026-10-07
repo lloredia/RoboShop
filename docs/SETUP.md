@@ -1,5 +1,7 @@
 # RoboShop Setup Guide
 
+Use the README Quick Start for the current 12-instance stack. This guide is the original phase-1 walkthrough. The SSH allow-list variable is now `admin_cidr`, and it must not be `0.0.0.0/0`.
+
 ## Prerequisites
 
 ### 1. AWS Account Setup
@@ -90,13 +92,13 @@ nano terraform.tfvars  # or vim, code, etc.
 
 **Required changes in terraform.tfvars:**
 
-1. **allowed_ssh_cidr**: Your public IP address
+1. **admin_cidr**: Your public IP address
    ```bash
    # Find your IP
    curl ifconfig.me
    
    # Update in terraform.tfvars
-   allowed_ssh_cidr = ["YOUR_IP/32"]
+   admin_cidr = ["YOUR_IP/32"]
    ```
 
 2. **ssh_public_key**: Content of ~/.ssh/roboshop.pub
@@ -288,7 +290,7 @@ aws ec2 describe-addresses
 
 ### Issue: Can't SSH to Bastion
 
-**Cause**: Wrong IP in allowed_ssh_cidr
+**Cause**: Wrong IP in admin_cidr
 
 **Solution**:
 ```bash

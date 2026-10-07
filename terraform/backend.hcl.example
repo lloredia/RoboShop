@@ -1,0 +1,15 @@
+# Opt-in remote state. Nothing in this file is active until you uncomment it.
+#
+# 1. Create an S3 bucket with versioning and default encryption, and a DynamoDB
+#    table whose partition key is LockID (string).
+# 2. Copy this file to backend.hcl (gitignored) and uncomment the assignments.
+# 3. From terraform/: terraform init -backend-config=backend.hcl
+#
+# Generated database passwords live in Terraform state as well as SSM.
+# Do not keep an unencrypted state file after the first apply.
+
+# bucket         = "your-terraform-state-bucket"
+# key            = "roboshop/terraform.tfstate"
+# region         = "us-east-1"
+# encrypt        = true
+# dynamodb_table = "terraform-state-locks"

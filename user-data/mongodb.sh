@@ -76,14 +76,14 @@ check_status "MongoDB connectivity test"
 # Load schema data (if URLs are provided via environment variables)
 if [ -n "$CATALOGUE_SCHEMA_URL" ]; then
     print_status "Loading catalogue schema..."
-    curl -s $CATALOGUE_SCHEMA_URL -o /tmp/catalogue.js
+    curl -fsSL "${CATALOGUE_SCHEMA_URL}" -o /tmp/catalogue.js
     mongo < /tmp/catalogue.js
     check_status "Catalogue schema load"
 fi
 
 if [ -n "$USER_SCHEMA_URL" ]; then
     print_status "Loading user schema..."
-    curl -s $USER_SCHEMA_URL -o /tmp/user.js
+    curl -fsSL "${USER_SCHEMA_URL}" -o /tmp/user.js
     mongo < /tmp/user.js
     check_status "User schema load"
 fi
