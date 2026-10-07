@@ -1,13 +1,21 @@
 ---
-# MySQL configuration
-mysql_root_password: "RoboShop@123"
+# Non-secret settings. Passwords are not stored in this file.
+# Copy group_vars/all.vault.yml.example to group_vars/all/vault.yml and encrypt it.
+# Ansible loads every file in group_vars/all/ for the all group.
 
-# RabbitMQ configuration
-rabbitmq_user: "roboshop"
-rabbitmq_password: "roboshop123"
+private_domain: roboshop.internal
 
-# Application artifact URLs
+mysql_app_user: shipping
+# Host pattern for the shipping account. Must match private_app_subnet_cidr.
+mysql_app_host: "10.0.10.%"
+rabbitmq_user: roboshop
+
 catalogue_url: "https://roboshop-artifacts.s3.amazonaws.com/catalogue.zip"
 user_url: "https://roboshop-artifacts.s3.amazonaws.com/user.zip"
 cart_url: "https://roboshop-artifacts.s3.amazonaws.com/cart.zip"
 frontend_url: "https://roboshop-artifacts.s3.amazonaws.com/frontend.zip"
+shipping_url: "https://roboshop-artifacts.s3.amazonaws.com/shipping.zip"
+payment_url: "https://roboshop-artifacts.s3.amazonaws.com/payment.zip"
+dispatch_url: "https://roboshop-artifacts.s3.amazonaws.com/dispatch.zip"
+
+shipping_schema_url: "https://raw.githubusercontent.com/roboshop-devops-project/mysql/main/shipping.sql"

@@ -33,7 +33,41 @@ output "bastion_instance_id" {
 # SSH Connection Info
 output "ssh_connection_command" {
   description = "SSH command to connect to bastion"
-  value       = "ssh -i ~/.ssh/roboshop ec2-user@${aws_eip.bastion.public_ip}"
+  value       = "ssh -i ~/.ssh/roboshop-key ec2-user@${aws_eip.bastion.public_ip}"
+}
+
+output "route53_zone_id" {
+  description = "Private hosted zone ID"
+  value       = module.route53.zone_id
+}
+
+output "instance_private_ips" {
+  description = "Private IP of each service instance"
+  value = {
+    mongodb   = module.mongodb.private_ip
+    mysql     = module.mysql.private_ip
+    redis     = module.redis.private_ip
+    rabbitmq  = module.rabbitmq.private_ip
+    frontend  = module.frontend.private_ip
+    catalogue = module.catalogue.private_ip
+    user      = module.user.private_ip
+    cart      = module.cart.private_ip
+    shipping  = module.shipping.private_ip
+    payment   = module.payment.private_ip
+    dispatch  = module.dispatch.private_ip
+  }
+}
+
+output "ssm_parameter_names" {
+  description = "SSM parameter names for generated credentials. Values are not outputs."
+  value = {
+    mysql_root_password = aws_ssm_parameter.mysql_root_password.name
+    mysql_app_user      = aws_ssm_parameter.mysql_app_user.name
+    mysql_app_password  = aws_ssm_parameter.mysql_app_password.name
+    mysql_app_host      = aws_ssm_parameter.mysql_app_host.name
+    rabbitmq_user       = aws_ssm_parameter.rabbitmq_user.name
+    rabbitmq_password   = aws_ssm_parameter.rabbitmq_password.name
+  }
 }
 
 # Security Group Outputs

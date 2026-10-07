@@ -11,7 +11,7 @@ resource "aws_security_group" "bastion" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = var.allowed_ssh_cidr
+    cidr_blocks = var.admin_cidr
   }
 
   egress {
@@ -97,7 +97,7 @@ resource "aws_security_group" "frontend" {
     protocol        = "tcp"
     security_groups = [aws_security_group.bastion.id]
   }
-  
+
   ingress {
     description     = "SSH from Bastion"
     from_port       = 22
@@ -141,6 +141,14 @@ resource "aws_security_group" "catalogue" {
   }
 
   ingress {
+    description     = "App port from Cart"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.cart.id]
+  }
+
+  ingress {
     description     = "SSH from Bastion"
     from_port       = 22
     to_port         = 22
@@ -149,7 +157,7 @@ resource "aws_security_group" "catalogue" {
   }
 
   egress {
-    description = "Allow all outbound"
+    description = "Allow outbound internet via NAT for package installs"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -183,6 +191,14 @@ resource "aws_security_group" "user" {
   }
 
   ingress {
+    description     = "App port from Payment"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.payment.id]
+  }
+
+  ingress {
     description     = "SSH from Bastion"
     from_port       = 22
     to_port         = 22
@@ -191,7 +207,7 @@ resource "aws_security_group" "user" {
   }
 
   egress {
-    description = "Allow all outbound"
+    description = "Allow outbound internet via NAT for package installs"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -225,6 +241,22 @@ resource "aws_security_group" "cart" {
   }
 
   ingress {
+    description     = "App port from Shipping"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.shipping.id]
+  }
+
+  ingress {
+    description     = "App port from Payment"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.payment.id]
+  }
+
+  ingress {
     description     = "SSH from Bastion"
     from_port       = 22
     to_port         = 22
@@ -233,7 +265,7 @@ resource "aws_security_group" "cart" {
   }
 
   egress {
-    description = "Allow all outbound"
+    description = "Allow outbound internet via NAT for package installs"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -259,11 +291,11 @@ resource "aws_security_group" "shipping" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "App port from Cart"
+    description     = "App port from Frontend"
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    security_groups = [aws_security_group.cart.id]
+    security_groups = [aws_security_group.frontend.id]
   }
 
   ingress {
@@ -275,7 +307,7 @@ resource "aws_security_group" "shipping" {
   }
 
   egress {
-    description = "Allow all outbound"
+    description = "Allow outbound internet via NAT for package installs"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -301,11 +333,11 @@ resource "aws_security_group" "payment" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "App port from Cart"
+    description     = "App port from Frontend"
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    security_groups = [aws_security_group.cart.id]
+    security_groups = [aws_security_group.frontend.id]
   }
 
   ingress {
@@ -317,7 +349,7 @@ resource "aws_security_group" "payment" {
   }
 
   egress {
-    description = "Allow all outbound"
+    description = "Allow outbound internet via NAT for package installs"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -339,16 +371,8 @@ resource "aws_security_group" "payment" {
 # Dispatch Service Security Group
 resource "aws_security_group" "dispatch" {
   name_prefix = "${var.project_name}-${var.environment}-dispatch-"
-  description = "Security group for dispatch service"
+  description = "Security group for dispatch service. Dispatch only consumes RabbitMQ, so it has no application ingress."
   vpc_id      = var.vpc_id
-
-  ingress {
-    description     = "App port from Payment"
-    from_port       = 8080
-    to_port         = 8080
-    protocol        = "tcp"
-    security_groups = [aws_security_group.payment.id]
-  }
 
   ingress {
     description     = "SSH from Bastion"
@@ -477,11 +501,14 @@ resource "aws_security_group" "redis" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "Redis from Cart"
-    from_port       = 6379
-    to_port         = 6379
-    protocol        = "tcp"
-    security_groups = [aws_security_group.cart.id]
+    description = "Redis from Cart and User"
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    security_groups = [
+      aws_security_group.cart.id,
+      aws_security_group.user.id,
+    ]
   }
 
   ingress {
@@ -519,11 +546,14 @@ resource "aws_security_group" "rabbitmq" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "AMQP from Payment"
-    from_port       = 5672
-    to_port         = 5672
-    protocol        = "tcp"
-    security_groups = [aws_security_group.payment.id]
+    description = "AMQP from Payment and Dispatch"
+    from_port   = 5672
+    to_port     = 5672
+    protocol    = "tcp"
+    security_groups = [
+      aws_security_group.payment.id,
+      aws_security_group.dispatch.id,
+    ]
   }
 
   ingress {

@@ -1,5 +1,9 @@
 # RoboShop Phase 2 & 3 Deployment Guide
 
+This guide used to live in `roboshop-phase2-3/`. That directory duplicated the root modules and user-data scripts, so it was removed. The root Terraform stack, Ansible playbook, and `user-data/` scripts are the deployment. Passwords are generated into SSM. Do not paste credentials into `terraform.tfvars`.
+
+The sections below are the original lab notes, updated where they contradicted the current stack.
+
 ## Overview
 
 This guide covers deploying **Phase 2 (Databases)** and **Phase 3 (Applications)** for the RoboShop e-commerce platform.
@@ -17,9 +21,9 @@ This guide covers deploying **Phase 2 (Databases)** and **Phase 3 (Applications)
 - Catalogue (Node.js microservice)
 - User (Node.js microservice)
 - Cart (Node.js microservice)
-- Shipping (Java microservice) - Coming soon
-- Payment (Python microservice) - Coming soon
-- Dispatch (Go microservice) - Coming soon
+- Shipping (Java microservice)
+- Payment (Python microservice)
+- Dispatch (Go microservice)
 
 **Additional Components:**
 - Route53 Private Hosted Zone for service discovery
@@ -102,10 +106,10 @@ Add to your `terraform/variables.tf`:
 Update your `terraform/terraform.tfvars`:
 
 ```hcl
-# Database passwords (change these!)
-mysql_root_password = "YourSecurePassword123!"
-rabbitmq_user      = "roboshop"
-rabbitmq_password  = "YourRabbitMQPassword123!"
+# Passwords are not variables. Terraform writes them to SSM.
+# See the README Quick Start for the vault step.
+rabbitmq_user  = "roboshop"
+mysql_app_user = "shipping"
 
 # Private domain
 private_domain = "roboshop.internal"
@@ -161,13 +165,13 @@ ssh -i ~/.ssh/roboshop ec2-user@$(terraform output -raw bastion_public_ip)
 mongo --host mongodb.roboshop.internal --eval "db.version()"
 
 # MySQL
-mysql -h mysql.roboshop.internal -uroot -pYourPassword -e "SELECT VERSION();"
+mysql -h mysql.roboshop.internal -uroot -p -e "SELECT VERSION();"
 
 # Redis
 redis-cli -h redis.roboshop.internal ping
 
 # RabbitMQ
-curl -u roboshop:YourPassword http://rabbitmq.roboshop.internal:15672/api/overview
+curl -u roboshop http://rabbitmq.roboshop.internal:15672/api/overview
 ```
 
 ### Step 6: Deploy Phase 3 (Applications)

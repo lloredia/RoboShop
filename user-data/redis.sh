@@ -96,16 +96,19 @@ BACKUP_DIR="/backup/redis"
 DATE=$(date +%Y%m%d_%H%M%S)
 REDIS_DIR="/var/lib/redis"
 
-# Save current state
+before="$(redis-cli LASTSAVE)"
 redis-cli BGSAVE
-
-# Wait for save to complete
-while [ $(redis-cli LASTSAVE) -eq $(redis-cli LASTSAVE) ]; do
+tries=0
+while [ "${tries}" -lt 10 ]; do
+    now="$(redis-cli LASTSAVE)"
+    if [ "${now}" != "${before}" ]; then
+        break
+    fi
+    tries=$((tries + 1))
     sleep 1
 done
 
-# Copy dump file
-cp $REDIS_DIR/dump.rdb $BACKUP_DIR/dump_$DATE.rdb
+cp "${REDIS_DIR}/dump.rdb" "${BACKUP_DIR}/dump_${DATE}.rdb"
 
 # Compress old backups
 find $BACKUP_DIR -name "dump_*.rdb" -mtime +1 -exec gzip {} \;

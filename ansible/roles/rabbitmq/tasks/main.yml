@@ -1,17 +1,18 @@
 ---
 - name: Import RabbitMQ signing key
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
 
 - name: Import Erlang signing key
-  rpm_key:
+  ansible.builtin.rpm_key:
     state: present
     key: https://packagecloud.io/rabbitmq/erlang/gpgkey
 
 - name: Create Erlang repository
-  copy:
+  ansible.builtin.copy:
     dest: /etc/yum.repos.d/rabbitmq-erlang.repo
+    mode: "0644"
     content: |
       [rabbitmq_erlang]
       name=rabbitmq_erlang
@@ -24,8 +25,9 @@
       sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 
 - name: Create RabbitMQ repository
-  copy:
+  ansible.builtin.copy:
     dest: /etc/yum.repos.d/rabbitmq.repo
+    mode: "0644"
     content: |
       [rabbitmq_server]
       name=rabbitmq_server
@@ -38,7 +40,7 @@
       sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 
 - name: Install RabbitMQ and dependencies
-  yum:
+  ansible.builtin.yum:
     name:
       - socat
       - logrotate
@@ -46,14 +48,28 @@
     state: present
 
 - name: Start and enable RabbitMQ
-  systemd:
+  ansible.builtin.systemd:
     name: rabbitmq-server
     state: started
-    enabled: yes
+    enabled: true
 
-- name: Add RabbitMQ user
-  shell: |
-    rabbitmqctl add_user {{ rabbitmq_user }} {{ rabbitmq_password }} 2>/dev/null || true
-    rabbitmqctl set_permissions -p / {{ rabbitmq_user }} ".*" ".*" ".*"
-    rabbitmqctl set_user_tags {{ rabbitmq_user }} administrator
-  ignore_errors: yes
+- name: Remove the default guest account
+  ansible.builtin.command: rabbitmqctl delete_user guest
+  register: rabbitmq_delete_guest
+  changed_when: rabbitmq_delete_guest.rc == 0
+  failed_when: rabbitmq_delete_guest.rc != 0 and 'no such user' not in (rabbitmq_delete_guest.stderr | lower)
+
+- name: Ensure the application user exists without the administrator tag
+  ansible.builtin.shell: |
+    set -euo pipefail
+    if rabbitmqctl list_users | awk '{print $1}' | grep -qx '{{ rabbitmq_user }}'; then
+      rabbitmqctl change_password '{{ rabbitmq_user }}' '{{ rabbitmq_password }}'
+    else
+      rabbitmqctl add_user '{{ rabbitmq_user }}' '{{ rabbitmq_password }}'
+    fi
+    rabbitmqctl set_user_tags '{{ rabbitmq_user }}' management
+    rabbitmqctl set_permissions -p / '{{ rabbitmq_user }}' '.*' '.*' '.*'
+  args:
+    executable: /bin/bash
+  changed_when: true
+  no_log: true

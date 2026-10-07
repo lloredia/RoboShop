@@ -1,0 +1,107 @@
+---
+- name: Install Python build dependencies
+  ansible.builtin.yum:
+    name:
+      - python3
+      - python3-pip
+      - python3-devel
+      - gcc
+      - unzip
+    state: present
+
+- name: Create roboshop user
+  ansible.builtin.user:
+    name: roboshop
+    comment: RoboShop Application User
+    create_home: true
+    shell: /bin/bash
+
+- name: Create app directory
+  ansible.builtin.file:
+    path: /app
+    state: directory
+    owner: roboshop
+    group: roboshop
+    mode: "0755"
+
+- name: Download payment artifact
+  ansible.builtin.get_url:
+    url: "{{ payment_url }}"
+    dest: /tmp/payment.zip
+    mode: "0644"
+
+- name: Extract payment artifact
+  ansible.builtin.unarchive:
+    src: /tmp/payment.zip
+    dest: /app
+    remote_src: true
+    owner: roboshop
+    group: roboshop
+
+- name: Run uWSGI as the roboshop user
+  ansible.builtin.replace:
+    path: /app/payment.ini
+    regexp: "^{{ item.key }} = .*"
+    replace: "{{ item.key }} = roboshop"
+  loop:
+    - {key: uid}
+    - {key: gid}
+
+- name: Install Python dependencies
+  ansible.builtin.pip:
+    requirements: /app/requirements.txt
+    executable: pip3
+
+- name: Create the roboshop config directory
+  ansible.builtin.file:
+    path: /etc/roboshop
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Write payment environment file
+  ansible.builtin.copy:
+    dest: /etc/roboshop/payment.env
+    owner: root
+    group: root
+    mode: "0600"
+    content: |
+      CART_HOST=cart.{{ private_domain }}
+      CART_PORT=8080
+      USER_HOST=user.{{ private_domain }}
+      USER_PORT=8080
+      AMQP_HOST=rabbitmq.{{ private_domain }}
+      AMQP_USER={{ rabbitmq_user }}
+      AMQP_PASS={{ rabbitmq_password }}
+  no_log: true
+
+- name: Create payment systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/payment.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Payment Service
+      After=network.target
+
+      [Service]
+      WorkingDirectory=/app
+      EnvironmentFile=/etc/roboshop/payment.env
+      ExecStart=/usr/local/bin/uwsgi --ini /app/payment.ini
+      Restart=always
+      RestartSec=10
+      SyslogIdentifier=payment
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start and enable payment
+  ansible.builtin.systemd:
+    name: payment
+    state: started
+    enabled: true

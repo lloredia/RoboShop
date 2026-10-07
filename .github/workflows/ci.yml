@@ -1,0 +1,93 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+          terraform_wrapper: false
+
+      - name: terraform fmt
+        working-directory: .
+        run: terraform fmt -check -recursive
+
+      - name: terraform init
+        run: terraform init -backend=false -input=false
+
+      - name: terraform validate
+        run: terraform validate
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.64.0
+
+      - name: tflint
+        working-directory: .
+        run: |
+          tflint --init
+          tflint --recursive --config "$(pwd)/.tflint.hcl"
+
+  checkov:
+    name: Checkov
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Checkov
+        run: pip install "checkov==3.2.449"
+
+      - name: checkov
+        run: checkov -d terraform --framework terraform --config-file .checkov.yaml --quiet --compact
+
+  ansible:
+    name: Ansible and shell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install linters
+        run: |
+          pip install "ansible-lint==25.8.2" "yamllint==1.37.1"
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: yamllint
+        run: yamllint -c .yamllint.yaml ansible .github
+
+      - name: ansible-lint
+        run: ansible-lint -c .ansible-lint ansible
+
+      - name: shellcheck
+        run: shellcheck -x user-data/*.sh scripts/*.sh terraform/*.sh

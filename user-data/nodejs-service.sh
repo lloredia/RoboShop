@@ -8,8 +8,12 @@
 
 set -e
 
+SERVICE_NAME="${SERVICE_NAME:-catalogue}"
+SERVICE_PORT="${SERVICE_PORT:-8080}"
+SERVICE_URL="${SERVICE_URL:-https://roboshop-artifacts.s3.amazonaws.com/${SERVICE_NAME}.zip}"
+
 LOG_FILE="/var/log/roboshop-${SERVICE_NAME}-install.log"
-exec > >(tee -a $LOG_FILE)
+exec > >(tee -a "${LOG_FILE}")
 exec 2>&1
 
 echo "========================================="
@@ -28,11 +32,6 @@ check_status() {
         exit 1
     fi
 }
-
-# Service configuration (passed via environment variables)
-SERVICE_NAME=${SERVICE_NAME:-catalogue}
-SERVICE_PORT=${SERVICE_PORT:-8080}
-SERVICE_URL=${SERVICE_URL:-"https://roboshop-artifacts.s3.amazonaws.com/${SERVICE_NAME}.zip"}
 
 # Install Node.js 18.x
 print_status "Installing Node.js..."
@@ -53,21 +52,21 @@ check_status "User creation"
 print_status "Downloading ${SERVICE_NAME} code..."
 mkdir -p /app
 cd /app
-curl -L -o /tmp/${SERVICE_NAME}.zip $SERVICE_URL
+curl -fsSL -o "/tmp/${SERVICE_NAME}.zip" "${SERVICE_URL}"
 check_status "${SERVICE_NAME} code download"
 
 # Extract application code
 print_status "Extracting ${SERVICE_NAME} code..."
-unzip -o /tmp/${SERVICE_NAME}.zip
-rm -f /tmp/${SERVICE_NAME}.zip
+unzip -o "/tmp/${SERVICE_NAME}.zip"
+rm -f "/tmp/${SERVICE_NAME}.zip"
 
 # Move files to /app
 if [ -d "${SERVICE_NAME}-main" ]; then
-    mv ${SERVICE_NAME}-main/* .
-    rm -rf ${SERVICE_NAME}-main
+    mv "${SERVICE_NAME}-main"/* .
+    rm -rf "${SERVICE_NAME}-main"
 elif [ -d "${SERVICE_NAME}" ]; then
-    mv ${SERVICE_NAME}/* .
-    rm -rf ${SERVICE_NAME}
+    mv "${SERVICE_NAME}"/* .
+    rm -rf "${SERVICE_NAME}"
 fi
 check_status "${SERVICE_NAME} code extraction"
 
@@ -82,7 +81,7 @@ check_status "npm install"
 
 # Create systemd service file
 print_status "Creating systemd service..."
-cat > /etc/systemd/system/${SERVICE_NAME}.service <<EOF
+cat > "/etc/systemd/system/${SERVICE_NAME}.service" <<EOF
 [Unit]
 Description=RoboShop ${SERVICE_NAME} Service
 After=network.target
@@ -92,6 +91,7 @@ Type=simple
 User=roboshop
 WorkingDirectory=/app
 Environment="NODE_ENV=production"
+EnvironmentFile=-/etc/roboshop/service.env
 ExecStart=/usr/bin/node /app/server.js
 Restart=always
 RestartSec=10
@@ -111,8 +111,8 @@ check_status "Systemd reload"
 
 # Enable and start service
 print_status "Starting ${SERVICE_NAME} service..."
-systemctl enable ${SERVICE_NAME}
-systemctl start ${SERVICE_NAME}
+systemctl enable "${SERVICE_NAME}"
+systemctl start "${SERVICE_NAME}"
 check_status "${SERVICE_NAME} service start"
 
 # Wait for service to be ready
@@ -120,19 +120,19 @@ sleep 10
 
 # Check service status
 print_status "Checking ${SERVICE_NAME} status..."
-systemctl status ${SERVICE_NAME} --no-pager
+systemctl status "${SERVICE_NAME}" --no-pager
 check_status "${SERVICE_NAME} service status"
 
 # Test service endpoint
 print_status "Testing ${SERVICE_NAME} endpoint..."
-curl -s http://localhost:${SERVICE_PORT}/health > /dev/null || \
-curl -s http://localhost:${SERVICE_PORT}/ > /dev/null
+curl -fsS "http://localhost:${SERVICE_PORT}/health" > /dev/null || \
+curl -fsS "http://localhost:${SERVICE_PORT}/" > /dev/null
 check_status "${SERVICE_NAME} endpoint test"
 
 # Configure firewall
 if systemctl is-active --quiet firewalld; then
     print_status "Configuring firewall..."
-    firewall-cmd --permanent --add-port=${SERVICE_PORT}/tcp
+    firewall-cmd --permanent --add-port="${SERVICE_PORT}/tcp"
     firewall-cmd --reload
     check_status "Firewall configuration"
 fi
@@ -142,7 +142,7 @@ print_status "${SERVICE_NAME} installation completed!"
 echo "========================================="
 echo "Service: ${SERVICE_NAME}"
 echo "Node.js Version: $(node -v)"
-echo "Service Status: $(systemctl is-active ${SERVICE_NAME})"
+echo "Service Status: $(systemctl is-active "${SERVICE_NAME}")"
 echo "Service Port: ${SERVICE_PORT}"
 echo "App Directory: /app"
 echo "User: roboshop"

@@ -116,11 +116,13 @@ get_instances() {
     
     print_info "Querying instances with tag ${TAG_KEY}=${TAG_VALUE} in state 'stopped'..."
     
-    # Query AWS for instances
+    # Query AWS for instances. Backticks are JMESPath syntax, not command substitution.
+    # shellcheck disable=SC2016
+    local query='Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0],State.Name,PrivateIpAddress,PublicIpAddress]'
     INSTANCES=$(aws ec2 describe-instances \
         --region "${REGION}" \
         --filters "${filter_tag}" "${filter_state}" \
-        --query 'Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0],State.Name,PrivateIpAddress,PublicIpAddress]' \
+        --query "${query}" \
         --output text)
     
     if [[ -z "${INSTANCES}" ]]; then
@@ -185,14 +187,13 @@ start_instances() {
     
     print_header "Starting instances"
     
-    # Extract instance IDs
-    INSTANCE_IDS=$(echo "${INSTANCES}" | awk '{print $1}')
-    
+    mapfile -t INSTANCE_IDS < <(echo "${INSTANCES}" | awk '{print $1}')
+
     print_info "Starting instances..."
-    
+
     if aws ec2 start-instances \
         --region "${REGION}" \
-        --instance-ids ${INSTANCE_IDS} \
+        --instance-ids "${INSTANCE_IDS[@]}" \
         --output json > /dev/null 2>&1; then
         
         print_success "Start command sent successfully"
@@ -202,7 +203,7 @@ start_instances() {
         # Wait for instances to be running
         if aws ec2 wait instance-running \
             --region "${REGION}" \
-            --instance-ids ${INSTANCE_IDS} 2>/dev/null; then
+            --instance-ids "${INSTANCE_IDS[@]}" 2>/dev/null; then
             
             print_success "All instances started successfully!"
             
@@ -210,10 +211,12 @@ start_instances() {
             echo ""
             print_header "Instance Status After Start"
             
+            # shellcheck disable=SC2016
+            local query='Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0],State.Name,PrivateIpAddress,PublicIpAddress]'
             UPDATED_INSTANCES=$(aws ec2 describe-instances \
                 --region "${REGION}" \
-                --instance-ids ${INSTANCE_IDS} \
-                --query 'Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0],State.Name,PrivateIpAddress,PublicIpAddress]' \
+                --instance-ids "${INSTANCE_IDS[@]}" \
+                --query "${query}" \
                 --output text)
             
             printf "%-20s %-30s %-15s %-15s %-15s\n" "INSTANCE ID" "NAME" "STATE" "PRIVATE IP" "PUBLIC IP"
@@ -230,7 +233,7 @@ start_instances() {
             
         else
             print_warning "Wait timeout - instances may still be starting"
-            print_info "Check status with: aws ec2 describe-instances --instance-ids ${INSTANCE_IDS}"
+            print_info "Check status with: aws ec2 describe-instances --instance-ids ${INSTANCE_IDS[*]}"
         fi
     else
         print_error "Failed to start instances"

@@ -1,10 +1,20 @@
 ---
-- name: Install Node.js 16
-  shell: |
-    curl -sL https://rpm.nodesource.com/setup_16.x | bash -
-    yum install -y nodejs
+- name: Download the NodeSource setup script
+  ansible.builtin.get_url:
+    url: https://rpm.nodesource.com/setup_16.x
+    dest: /tmp/nodesource-setup.sh
+    mode: "0755"
+
+- name: Configure the NodeSource repository
+  ansible.builtin.command: /tmp/nodesource-setup.sh
   args:
-    creates: /usr/bin/node
+    creates: /etc/yum.repos.d/nodesource-el7.repo
+  changed_when: true
+
+- name: Install Node.js 16
+  ansible.builtin.yum:
+    name: nodejs
+    state: present
 
 - name: Create roboshop user
   user:
@@ -34,10 +44,12 @@
     group: roboshop
 
 - name: Install npm dependencies
-  shell: npm install
+  ansible.builtin.command: npm install
   args:
     chdir: /app
+  become: true
   become_user: roboshop
+  changed_when: true
 
 - name: Create cart systemd service
   copy:
@@ -47,8 +59,8 @@
       Description=Cart Service
       [Service]
       User=roboshop
-      Environment=REDIS_HOST=redis.roboshop.internal
-      Environment=CATALOGUE_HOST=catalogue.roboshop.internal
+      Environment=REDIS_HOST=redis.{{ private_domain }}
+      Environment=CATALOGUE_HOST=catalogue.{{ private_domain }}
       Environment=CATALOGUE_PORT=8080
       ExecStart=/bin/node /app/server.js
       SyslogIdentifier=cart

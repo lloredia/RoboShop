@@ -8,15 +8,18 @@
     - /etc/yum.repos.d/nodesource-el.repo
 
 - name: Yum clean all
-  shell: yum clean all
+  ansible.builtin.command: yum clean all
+  changed_when: true
 
 - name: Enable nodejs14 extras
-  shell: amazon-linux-extras enable nodejs14
-  ignore_errors: yes
+  ansible.builtin.command: amazon-linux-extras enable nodejs14
+  register: catalogue_nodejs_extra
+  changed_when: "'already enabled' not in catalogue_nodejs_extra.stdout"
+  failed_when: false
 
 - name: Install Node.js
   yum:
-    name: 
+    name:
       - nodejs
       - npm
     state: present
@@ -49,10 +52,12 @@
     group: roboshop
 
 - name: Install npm dependencies
-  shell: npm install
+  ansible.builtin.command: npm install
   args:
     chdir: /app
+  become: true
   become_user: roboshop
+  changed_when: true
 
 - name: Create catalogue systemd service
   copy:
@@ -63,7 +68,7 @@
       [Service]
       User=roboshop
       Environment=MONGO=true
-      Environment=MONGO_URL="mongodb://mongodb.roboshop.internal:27017/catalogue"
+      Environment=MONGO_URL="mongodb://mongodb.{{ private_domain }}:27017/catalogue"
       ExecStart=/bin/node /app/server.js
       SyslogIdentifier=catalogue
       [Install]

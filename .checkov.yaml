@@ -1,0 +1,39 @@
+---
+# Intentional findings. CI runs checkov without --soft-fail, so anything
+# not listed here still fails the build.
+skip-check:
+  # Private instances reach package mirrors and artifact buckets through the
+  # NAT gateway. Ingress is limited to specific security groups. Opening
+  # egress to the internet is the tradeoff for not running a private mirror.
+  - CKV_AWS_382
+  # The ALB security group is the public storefront edge (HTTP). It is not
+  # attached until the load balancer in "What I'd do next" exists. No other
+  # group allows 0.0.0.0/0 on port 80.
+  - CKV_AWS_260
+  # SSH to the bastion uses var.admin_cidr, which is required and rejected
+  # when it contains 0.0.0.0/0 or ::/0. Checkov treats an unresolved CIDR
+  # variable as open to the world.
+  - CKV_AWS_24
+  # The public subnet exists so the bastion can receive its Elastic IP.
+  # Application and database subnets do not map public addresses, and the
+  # instance module sets associate_public_ip_address to false.
+  - CKV_AWS_130
+  # The bastion is the only instance with a public address. It is the jump
+  # host, and port 22 is limited to admin_cidr.
+  - CKV_AWS_88
+  # CloudWatch log groups are created as destinations. Nothing ships logs
+  # yet, so a customer-managed key for those groups waits until the agent
+  # is installed. SSM parameters use a separate CMK.
+  - CKV_AWS_158
+  # Private DNS is an A record per instance private IP. These are not alias
+  # records because the targets are EC2 instances, not load balancers.
+  - CKV2_AWS_23
+  # The secrets CMK keeps the AWS default key policy so the account root can
+  # still administer it. A custom policy would also need Resource "*" because
+  # a key policy cannot name its own ARN, and that trips broader IAM checks.
+  - CKV2_AWS_64
+  # Checkov does not follow security group ids across these module outputs.
+  # Every group except the pre-created ALB group is attached to an instance
+  # in main.tf or databases-and-apps.tf. The ALB group stays unused until
+  # that load balancer is added.
+  - CKV2_AWS_5

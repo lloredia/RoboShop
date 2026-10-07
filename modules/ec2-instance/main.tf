@@ -7,19 +7,27 @@ resource "aws_instance" "main" {
   key_name               = var.key_name
   subnet_id              = var.subnet_id
   vpc_security_group_ids = var.security_group_ids
-  
-  user_data = var.user_data_script != "" ? var.user_data_script : null
-  
+
+  user_data                   = var.user_data_script != "" ? var.user_data_script : null
+  associate_public_ip_address = false
+  ebs_optimized               = true
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+
   # Enable detailed monitoring (optional but recommended)
   monitoring = var.enable_detailed_monitoring
-  
+
   # Root volume configuration
   root_block_device {
     volume_type           = var.root_volume_type
     volume_size           = var.root_volume_size
     delete_on_termination = true
     encrypted             = var.enable_encryption
-    
+
     tags = merge(
       var.tags,
       {
@@ -27,7 +35,7 @@ resource "aws_instance" "main" {
       }
     )
   }
-  
+
   # Additional data volume (optional, for databases)
   dynamic "ebs_block_device" {
     for_each = var.data_volume_size > 0 ? [1] : []
@@ -37,7 +45,7 @@ resource "aws_instance" "main" {
       volume_size           = var.data_volume_size
       delete_on_termination = false
       encrypted             = var.enable_encryption
-      
+
       tags = merge(
         var.tags,
         {
@@ -46,13 +54,13 @@ resource "aws_instance" "main" {
       )
     }
   }
-  
+
   # IAM instance profile for CloudWatch, SSM, etc.
   iam_instance_profile = var.iam_instance_profile
-  
+
   # User data to execute on first boot
   user_data_replace_on_change = var.user_data_replace_on_change
-  
+
   tags = merge(
     var.tags,
     {
@@ -62,20 +70,15 @@ resource "aws_instance" "main" {
       Tier        = var.tier
     }
   )
-  
-  lifecycle {
-    create_before_destroy = false
-    ignore_changes        = []
-  }
 }
 
 # CloudWatch Log Group for instance logs (optional)
 resource "aws_cloudwatch_log_group" "instance" {
   count = var.enable_cloudwatch_logs ? 1 : 0
-  
+
   name              = "/aws/ec2/${var.project_name}-${var.environment}-${var.service_name}"
   retention_in_days = var.log_retention_days
-  
+
   tags = merge(
     var.tags,
     {
@@ -88,7 +91,7 @@ resource "aws_cloudwatch_log_group" "instance" {
 # CloudWatch Alarms for instance health
 resource "aws_cloudwatch_metric_alarm" "instance_health" {
   count = var.enable_health_alarm ? 1 : 0
-  
+
   alarm_name          = "${var.project_name}-${var.environment}-${var.service_name}-health"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
@@ -99,18 +102,18 @@ resource "aws_cloudwatch_metric_alarm" "instance_health" {
   threshold           = "0"
   alarm_description   = "This metric monitors instance health"
   alarm_actions       = var.alarm_actions
-  
+
   dimensions = {
     InstanceId = aws_instance.main.id
   }
-  
+
   tags = var.tags
 }
 
 # CloudWatch Alarm for CPU utilization
 resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   count = var.enable_cpu_alarm ? 1 : 0
-  
+
   alarm_name          = "${var.project_name}-${var.environment}-${var.service_name}-cpu"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
@@ -121,21 +124,21 @@ resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
   threshold           = var.cpu_threshold
   alarm_description   = "This metric monitors CPU utilization"
   alarm_actions       = var.alarm_actions
-  
+
   dimensions = {
     InstanceId = aws_instance.main.id
   }
-  
+
   tags = var.tags
 }
 
 # Elastic IP (optional, for bastion or public-facing instances)
 resource "aws_eip" "main" {
   count = var.allocate_eip ? 1 : 0
-  
+
   instance = aws_instance.main.id
   domain   = "vpc"
-  
+
   tags = merge(
     var.tags,
     {

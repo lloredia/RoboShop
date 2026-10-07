@@ -43,9 +43,9 @@ check_status "Nginx service start"
 FRONTEND_URL=${FRONTEND_URL:-"https://roboshop-artifacts.s3.amazonaws.com/frontend.zip"}
 
 print_status "Downloading frontend code..."
+find /usr/share/nginx/html -mindepth 1 -delete
 cd /usr/share/nginx/html
-rm -rf *
-curl -L -o /tmp/frontend.zip $FRONTEND_URL
+curl -fsSL -o /tmp/frontend.zip "${FRONTEND_URL}"
 check_status "Frontend code download"
 
 # Extract frontend code
@@ -85,6 +85,10 @@ location /health {
 }
 EOF
 check_status "Nginx configuration"
+
+if [[ -n "${PRIVATE_DOMAIN:-}" ]]; then
+  sed -i "s/roboshop.internal/${PRIVATE_DOMAIN}/g" /etc/nginx/default.d/roboshop.conf
+fi
 
 # Restart Nginx
 print_status "Restarting Nginx..."

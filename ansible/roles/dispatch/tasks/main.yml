@@ -1,0 +1,106 @@
+---
+- name: Install Go
+  ansible.builtin.yum:
+    name:
+      - golang
+      - git
+      - unzip
+    state: present
+
+- name: Create roboshop user
+  ansible.builtin.user:
+    name: roboshop
+    comment: RoboShop Application User
+    create_home: true
+    shell: /bin/bash
+
+- name: Create app directory
+  ansible.builtin.file:
+    path: /app
+    state: directory
+    owner: roboshop
+    group: roboshop
+    mode: "0755"
+
+- name: Download dispatch artifact
+  ansible.builtin.get_url:
+    url: "{{ dispatch_url }}"
+    dest: /tmp/dispatch.zip
+    mode: "0644"
+
+- name: Extract dispatch artifact
+  ansible.builtin.unarchive:
+    src: /tmp/dispatch.zip
+    dest: /app
+    remote_src: true
+    owner: roboshop
+    group: roboshop
+
+- name: Build dispatch
+  ansible.builtin.shell: |
+    set -euo pipefail
+    export GO111MODULE=on
+    export GOPROXY=https://proxy.golang.org,direct
+    if [[ ! -f go.mod ]]; then
+      go mod init dispatch
+    fi
+    go get github.com/streadway/amqp@v1.0.0
+    go get github.com/opentracing/opentracing-go@v1.2.0
+    go build -o /app/dispatch .
+  args:
+    chdir: /app
+    executable: /bin/bash
+  become: true
+  become_user: roboshop
+  changed_when: true
+
+- name: Create the roboshop config directory
+  ansible.builtin.file:
+    path: /etc/roboshop
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Write dispatch environment file
+  ansible.builtin.copy:
+    dest: /etc/roboshop/dispatch.env
+    owner: root
+    group: root
+    mode: "0600"
+    content: |
+      AMQP_HOST=rabbitmq.{{ private_domain }}
+      AMQP_USER={{ rabbitmq_user }}
+      AMQP_PASS={{ rabbitmq_password }}
+  no_log: true
+
+- name: Create dispatch systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/dispatch.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Dispatch Service
+      After=network.target
+
+      [Service]
+      User=roboshop
+      WorkingDirectory=/app
+      EnvironmentFile=/etc/roboshop/dispatch.env
+      ExecStart=/app/dispatch
+      Restart=always
+      RestartSec=10
+      SyslogIdentifier=dispatch
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start and enable dispatch
+  ansible.builtin.systemd:
+    name: dispatch
+    state: started
+    enabled: true

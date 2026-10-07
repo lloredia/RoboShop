@@ -1,0 +1,27 @@
+---
+# Example only. These placeholders are not passwords.
+#
+#   mkdir -p ansible/group_vars/all
+#   cp ansible/group_vars/all.vault.yml.example ansible/group_vars/all/vault.yml
+#   ansible-vault encrypt ansible/group_vars/all/vault.yml
+#
+# Or create the encrypted file directly:
+#
+#   ansible-vault create ansible/group_vars/all/vault.yml
+#
+# After terraform apply, copy the generated values out of SSM. Do not invent
+# a second password. From a principal that can read the parameters:
+#
+#   aws ssm get-parameter --name /roboshop/dev/mysql/root_password \
+#     --with-decryption --query Parameter.Value --output text
+#   aws ssm get-parameter --name /roboshop/dev/mysql/app_password \
+#     --with-decryption --query Parameter.Value --output text
+#   aws ssm get-parameter --name /roboshop/dev/rabbitmq/password \
+#     --with-decryption --query Parameter.Value --output text
+#
+# Run the playbook with --ask-vault-pass, or with --vault-password-file pointing
+# at a gitignored file.
+
+mysql_root_password: "REPLACE_ME"
+mysql_app_password: "REPLACE_ME"
+rabbitmq_password: "REPLACE_ME"

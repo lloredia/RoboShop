@@ -16,6 +16,9 @@ module "route53" {
     catalogue = module.catalogue.private_ip
     user      = module.user.private_ip
     cart      = module.cart.private_ip
+    shipping  = module.shipping.private_ip
+    payment   = module.payment.private_ip
+    dispatch  = module.dispatch.private_ip
   }
 
   tags = var.tags
